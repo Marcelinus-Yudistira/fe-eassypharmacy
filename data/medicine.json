@@ -1,0 +1,53 @@
+{
+    "medicines": [
+        {
+            "id": 1,
+            "name": "Paracetamol", 
+            "price": 15000,
+            "quantity": 10
+        },
+        {
+            "id": 2,
+            "name": "OBH Combi", 
+            "price": 20000,
+            "quantity": 10
+        },
+        {
+            "id": 3,
+            "name": "Tusaloz", 
+            "price": 25000,
+            "quantity": 10
+        },
+        {
+            "id": 4,
+            "name": "Canesten", 
+            "price": 7000,
+            "quantity": 10 
+        },
+        {
+            "id": 5,
+            "name": "Sanmol", 
+            "price": 32000,
+            "quantity": 10 
+        },
+        {
+            "id": 6,
+            "name": "Minyak Kayu Putih", 
+            "price": 6500,
+            "quantity": 10 
+        },
+        {
+            "id": 7,
+            "name": "Sandril", 
+            "price": 12500,
+            "quantity": 10 
+        }
+    ],
+    "carts": [
+        {
+            "id": 2,
+            "name": "OBH Combi", 
+            "price": 20000 
+        }
+    ]
+}
