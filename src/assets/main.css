@@ -34,6 +34,10 @@ a,
   }
 } */
 
+#app{
+ margin-top: 100px;
+}
+
 .is-content-end{
   justify-content: end;
 }
@@ -44,4 +48,42 @@ a,
 
 .vh-90{
   height: 90vh;
+}
+
+.m-fit-content{
+  max-width: fit-content;
+}
+
+.m-rounded-left{
+  border-radius: 0,1,1,0;
+}
+
+.m-rounded-bottom{
+  border-radius: 0px 0px 7px 7px !important;
+}
+
+.m-h-70{
+ height: 70px;
+}
+
+.dropdown-toggle::after{
+  content: none;
+}
+
+.m-mt-content{
+  margin-top: 120px;
+}
+
+.card-img-top-side {
+  object-fit: cover; /* Memastikan gambar tetap proporsional */
+  height: 150px; /* Tinggi yang diinginkan untuk card */
+}
+
+.side-card {
+  height: fit-content; /* Tinggi yang diinginkan untuk card */
+  overflow: hidden; /* Mengatasi jika gambar melebihi tinggi card */
+}
+
+.text-justify {
+  text-align: justify;
 }

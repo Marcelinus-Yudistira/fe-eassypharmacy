@@ -1,21 +1,30 @@
 <template>
-    <nav class="navbar navbar-expand-lg bg-dark-subtle">
+    <nav class="navbar navbar-expand-lg bg-dark-subtle m-h-70 fixed-top">
         <div class="container-fluid ms-5 me-5">
-            <a class="navbar-brand" href="/">Easy Pharmacy</a>
+            <router-link to="/home" class="navbar-brand">Easy Pharmacy</router-link>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse is-content-end" id="navbarSupportedContent">
-                <form v-if="$route.name !== 'login' && $route.name !== 'register'" class="d-flex" @submit.prevent="submitSearch">
-                    <input v-model="searchTerm" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
-                <ul class="navbar-nav mb-2 mb-lg-0" v-if="$route.name !== 'login' && $route.name !== 'register'">
+                <div v-if="$route.name !== 'login' && $route.name !== 'register'" class="d-flex">
+                    <div class="input-group me-2" @submit.prevent="submitSearch">
+                        <input type="search" v-model="searchTerm" class="form-control m-rounded-left" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+                        <button type="button" @click="submitSearch" class="btn btn-primary"><i class="bi bi-search"></i></button>
+                    </div>
+                </div>
+                <ul class="navbar-nav mb-2 mb-lg-0" v-if="!isLoggedIn">
                     <li class="nav-item">
-                        <a class="nav-link" href="" ><i class="bi bi-cart"></i></a>
+                        <router-link to="/cart" class="nav-link p-1 fs-3 ms-2 me-2"><i class="bi bi-cart"></i></router-link>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="" @click="logout"><i class="bi bi-box-arrow-right"></i></a>
+                        <!-- <a class="nav-link p-1 fs-3" href="" @click="logout"><i class="bi bi-person-circle"></i></a> -->
+                        <div class="dropdown">
+                            <div class="p-1 fs-3 dropdown-toggle" type="button" href="" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-person-circle"></i></div>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Profile</a></li>
+                                <li><a class="dropdown-item" href="#">Logout</a></li>
+                            </ul>
+                        </div>
                     </li>
                 </ul>
                 <button v-if="$route.name === 'register'" class="btn btn-outline-success" @click="this.$router.push('login')">Login</button>
@@ -26,20 +35,25 @@
 </template>
 
 <script setup>
-import { ref, defineEmits } from 'vue';
+import { ref, defineEmits, watch } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 
-const searchTerm = ref('');
-
 const router = useRouter();
 const auth = useAuthStore()
+
+const searchTerm = ref('');
+const isLoggedIn = ref('');
 
 const submitSearch = () => {
   const data = searchTerm.value
   emit('search', data);
 };
 const emit = defineEmits(['search']);
+
+watch(() => auth.isLoggedIn, (newValue) => {
+  isLoggedIn.value = newValue;
+});
 
 async function logout() {
     console.log('masuk');

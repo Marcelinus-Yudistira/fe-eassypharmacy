@@ -1,36 +1,61 @@
 <template>
-  <!-- <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
-    <div class="bg-body-tertiary me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-      <div class="my-3 p-3">
-        <h2 class="display-5">Headrine</h2>
-        <p class="lead">And an even wittier subheading.</p>
-      </div>
-      <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
-    </div>
-    <div class="text-bg-primary me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-      <div class="my-3 py-3">
-        <h2 class="display-5">Another headline</h2>
-        <p class="lead">And an even wittier subheading.</p>
-      </div>
-      <div class="bg-body-tertiary shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
-    </div>
-  </div> -->
-
   <div class="container">
-    <div class="row mt-5">
-      <div class="col">
-        <h2>Petunjuk Penggunaan Obat</h2>
+    <div class="row m-mt-content">
+      <div class="col-3">
+        <img src="https://doktersehat.com/wp-content/uploads/2020/02/obat_dan_vitamin_Doktersehat_com_Biothicol_Sirup.jpg" class="rounded img-fluid" alt="...">
       </div>
-      <div class="col">
-        <h2 class="text-center">Detail Obat</h2>
-        <div v-if="medicineDetail">
-          <h4>{{ medicineDetail.name }}</h4>
-          <p>Deskripsi: {{ medicineDetail.description }}</p>
-          <p>Harga: Rp. {{ medicineDetail.price }}</p>
-          <p>Stok: {{ medicineDetail.stock }} Buah</p>
+      <div class="col-7">
+        <div v-if="medicine">
+          <h3>{{ medicine.name }}</h3>
+          <p class="fs-5">Harga: Rp. {{ medicine.price }}</p>
+
+          <button class="btn btn-primary mt-4">Tambah ke Keranjang</button>
+
+          <div class="mt-5">
+            <h5 class="mb-1">Kategori Obat : </h5>
+            <p class="mb-4">Dolor sit amet</p>
+            <h5 class="mb-1">Deskripsi : </h5>
+            <p class="mb-4 text-justify">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Inventore perspiciatis exercitationem assumenda harum quia ratione tempore provident consequuntur optio consequatur ipsa accusantium, natus necessitatibus impedit suscipit minima eos ipsam iste?</p>
+            <h5 class="mb-1">Indikasi Umum : </h5>
+            <p class="mb-4 text-justify">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Inventore perspiciatis minima eos ipsam iste?</p>
+            <h5 class="mb-1">Komposisi : </h5>
+            <p class="mb-4 text-justify">Ipsum orem dolor sit amet consectetur adipisicing elitnatus necessitatibus impedit suscipit minima eos ipsam iste?</p>
+            <h5 class="mb-1">Dosis : </h5>
+            <p class="mb-4">Lorem, suscipit minima eos ipsam iste?</p>
+            <h5 class="mb-1">Aturan Pakai : </h5>
+            <p class="mb-4 text-justify">Lorem, ipsum dolor sit assumenda harum quia ratione tempore provident consequuntur optio consequatur ipsa accusantium, natus necessitatibus impedit suscipit minima eos ipsam iste?</p>
+            <h5 class="mb-1">Kontradiksi : </h5>
+            <p class="mb-4 text-justify">Inventore perspiciatis exercitationem assumenda harum quia ratione tempore provident consequuntur optio consequatur ipsa accusantium, natus necessitatibus impedit suscipit minima eos ipsam iste?</p>
+            <h5 class="mb-1">Efek Samping : </h5>
+            <p class="mb-4">Consectetur adipisicing elit Inventore perspiciatis empedit suscipit minima eos ipsam iste?</p>
+          </div>
+          <!-- <p>Deskripsi: {{ medicineDetail.description }}</p>
+          <p>Stok: {{ medicineDetail.stock }} Buah</p> -->
         </div>
         <div v-else>
           <p>Obat tidak ditemukan.</p>
+        </div>
+      </div>
+      <div class="col-2">
+        <p>Lihat Produk terkait</p>
+        <div v-for="medicine in medicines" :key="medicine.id" >
+          <div class="col">
+            <div class="card side-card mt-4">
+              <img src="https://doktersehat.com/wp-content/uploads/2020/02/obat_dan_vitamin_Doktersehat_com_Biothicol_Sirup.jpg" class="card-img-top-side" alt="...">
+              <div class="card-body bg-dark-subtle m-rounded-bottom">
+                <h5 class="card-title">{{ medicine.name }}</h5>
+                <p class="card-text fw-medium">Harga : Rp. {{ medicine.price }},00</p>
+                <div class="row">
+                  <div class="col-4">
+                    <button class="btn btn-sm btn-primary w-100 ps-2"><i class="bi bi-cart"></i></button>
+                  </div>
+                  <div class="col-8 ps-0">
+                    <button @click="selectMedicine(medicine)" class="btn btn-sm btn-primary w-100">Detail Produk</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -44,15 +69,19 @@ import { useRoute } from 'vue-router';
 
 const medicineStore = useMedicineStore()
 const medicine = ref([]);
-const medicineDetail = ref([]);
+const medicines = ref([]);
 const route = useRoute()
 
 async function fetchData() {
   medicine.value = await medicineStore.getDetail(route.params.id);
 }
 
+async function fetchAllData() {
+  medicines.value = await medicineStore.fetchMedicineItems();
+}
+
 onMounted(async () => {
   await fetchData()
-  medicineDetail.value = medicine.value.data
+  await fetchAllData()
 })
 </script>

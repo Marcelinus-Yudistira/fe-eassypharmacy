@@ -21,7 +21,7 @@
               </div>
               <div class="mb-3 form-check">
                 <input type="checkbox" class="form-check-input" id="staySignedIn">
-                <label class="form-check-label" for="staySignedIn">Stay signed in?</label>
+                <!-- <label class="form-check-label" for="staySignedIn">Stay signed in?</label> -->
               </div>
               <button type="submit" class="btn btn-primary w-100">Masuk</button>
             </form>
@@ -57,10 +57,9 @@ async function login() {
 
   if (emailIsValid.value && passwordIsValid.value) {
     try{
-      console.log('mlebu');
       await auth.login(userData.value);
       alert('Login berhasil');
-      router.push('/');
+      router.push('/home');
     }catch(error){
       console.error('Error during login:', error);
     }

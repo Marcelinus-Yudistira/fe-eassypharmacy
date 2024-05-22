@@ -9,14 +9,11 @@ export const useAuthStore  = defineStore({
   }),
   getters: {
     getUser: state => state.user,
-    // isLoggedIn: state => state.isLoggedIn,
-    isLoggedIn(){
-      return false
-    },
-    accessToken: state => state.accessToken
+    getIsLoggedIn: state => state.isLoggedIn,
+    getAccessToken: state => state.accessToken
   },
   actions: {
-    async register(userData) {
+    async register(userData) {;
       try {
         const response = await fetch('http://localhost:3000/api/v1/auth/register', {
           method: 'POST',
@@ -41,15 +38,13 @@ export const useAuthStore  = defineStore({
           body: JSON.stringify(credential)
         });
         const responseData = await response.json();
-        console.log(responseData,'<< response login');
 
         localStorage.setItem('token', responseData.data.accessToken); 
 
-        this.$patch({
-          accessToken: responseData.data.accessToken,
-          isLoggedIn: true
-        });
+        this.isLoggedIn = true;
+        this.accessToken = responseData.data.accessToken;
 
+        console.log('sampe sini');
 
         return responseData;
       } catch (error) {
@@ -60,15 +55,13 @@ export const useAuthStore  = defineStore({
     },
     async logout() {
       try {
-        this.$patch({
-          accessToken: null,
-          isLoggedIn: false
-        });
+        this.isLoggedIn = false;
+        this.accessToken = null;
 
         localStorage.removeItem('token');
       } catch (error) {
         throw error;
       }
     }
-  },
+  }
 });

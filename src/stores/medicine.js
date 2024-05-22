@@ -5,13 +5,13 @@ import {defineStore} from 'pinia'
 export const useMedicineStore = defineStore('medicineStore', () => {
     const medicineItems = ref([])
 
-    const fetchMedicineItems = async (accessToken) => {
+    const fetchMedicineItems = async () => {
         try {
-            const response = await fetch('http://localhost:3000/api/v1/medicines',{
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                  }
-            });
+            const response = await fetch('http://localhost:3000/api/v1/medicines?count=10'
+                // headers: {
+                //     'Authorization': `Bearer ${accessToken}`,
+                //   }
+            );
             const responseData = await response.json()
             const data = responseData.data
             return data;
@@ -23,12 +23,10 @@ export const useMedicineStore = defineStore('medicineStore', () => {
 
     const fetchMedicineItemsFilter = async (name) => {
         try {
-            const response = await fetch('http://localhost:3000/api/v1/medicines',{
-                params: {
-                    search: name
-                }
-            });
-            return await response.json();
+            const response = await fetch(`http://localhost:3000/api/v1/medicines?keyword=${name}&count=10`);
+            const responseData = await response.json()
+            const data = responseData.data
+            return data
         } catch (error) {
             console.error('Error fetching medicine items:', error);
             throw error;
@@ -38,7 +36,9 @@ export const useMedicineStore = defineStore('medicineStore', () => {
     const getDetail = async (id) => {
         try {
             const response = await fetch(`http://localhost:3000/api/v1/medicines/${id}`);
-            return await response.json();
+            const responseData = await response.json()
+            const data = responseData.data
+            return data;
         } catch (error) {
             console.error('Error fetching menu items:', error);
             throw error;
