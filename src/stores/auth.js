@@ -5,7 +5,8 @@ export const useAuthStore  = defineStore({
   state: () => ({
     user: null,
     isLoggedIn: false,
-    accessToken: null
+    accessToken: null,
+    checkindong: 'marcel'
   }),
   getters: {
     getUser: state => state.user,

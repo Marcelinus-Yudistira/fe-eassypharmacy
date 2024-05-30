@@ -1,38 +1,35 @@
 
 import {ref} from 'vue'
 import {defineStore} from 'pinia'
+import {useAuthStore} from '@/stores/authentication'
 
 export const useMedicineStore = defineStore('medicineStore', () => {
     const medicineItems = ref([])
+    const isLoading=ref(false)
 
-    const fetchMedicineItems = async () => {
+    const pagination=ref(null)
+
+    const auth = useAuthStore()
+
+    const fetchMedicineItems = async (request) => {
         try {
-            const response = await fetch('http://localhost:3000/api/v1/medicines?count=10'
-                // headers: {
-                //     'Authorization': `Bearer ${accessToken}`,
-                //   }
-            );
+            let url = 'http://localhost:3000/api/v1/medicines';
+        
+            if (request) {
+                const queryString = new URLSearchParams(request).toString();
+                url += `?${queryString}`;
+            }
+
+            const response = await fetch(url);
             const responseData = await response.json()
-            const data = responseData.data
+            const data = responseData.data.medicines
+            pagination.value = responseData.data.pagination
             return data;
         } catch (error) {
             console.error('Error fetching medicine items:', error);
             throw error;
         }
     };
-
-    const fetchMedicineItemsFilter = async (name) => {
-        try {
-            const response = await fetch(`http://localhost:3000/api/v1/medicines?keyword=${name}&count=10`);
-            const responseData = await response.json()
-            const data = responseData.data
-            return data
-        } catch (error) {
-            console.error('Error fetching medicine items:', error);
-            throw error;
-        }
-    };
-
     const getDetail = async (id) => {
         try {
             const response = await fetch(`http://localhost:3000/api/v1/medicines/${id}`);
@@ -40,75 +37,118 @@ export const useMedicineStore = defineStore('medicineStore', () => {
             const data = responseData.data
             return data;
         } catch (error) {
-            console.error('Error fetching menu items:', error);
+            console.error('Error fetching medicine item:', error);
             throw error;
         }
     };
 
-    // async function createMenu(newMenu) {
-    //     try {
-    //         const currentMenuItems = await fetchMenuItems();
-    //         const currentMenuCount = currentMenuItems.length + 1;
-
-    //         newMenu.id = currentMenuCount.toString();
-    //         const response = await fetch('http://localhost:3000/menu', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             },
-    //             body: JSON.stringify(newMenu)
-    //         })
-    //         await response.json()
-    //     } catch (error) {
-    //         console.error('Error creating menu:', error)
-    //     }
-    // }
-
-    // async function editMenu(menu) {
-    //     try {
-    //         const response = await fetch(`http://localhost:3000/menu/${menu.id}`, {
-    //             method: 'PUT',
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             },
-    //             body: JSON.stringify(menu)
-    //         });
-    //         await response.json();
-    //         await fetchMenuItems();
-    //     } catch (error) {
-    //         console.error('Error editing menu:', error);
-    //     }
-    // }
-
+    const getCategory = async () => {
+        try {
+            const response = await fetch(`http://localhost:3000/api/v1/categories`);
+            const responseData = await response.json()
+            const data = responseData.data
+            return data;
+        } catch (error) {
+            console.error('Error fetching categories items:', error);
+            throw error;
+        }
+    }
     const fetchCartItems = async () => {
         try {
-            const response = await fetch('http://localhost:3000/carts');
-            return await response.json();
+            const response = await fetch('http://localhost:3000/api/v1/medicine-orders/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${auth.accessToken}`
+                  },
+            })
+            const responseData = await response.json()
+            const data = responseData.data
+            return data
         } catch (error) {
-            console.error('Error fetching medicine items:', error);
+            console.error('Error fetching medicine items cart:', error);
             throw error;
         }
     };
 
-    async function addCart(medicine) {
+    async function addCart(request) {
         try {
-            const currentCart = await fetchCartItems();
-            const currentCartCount = currentCart.length + 1;
-
-            medicine.id = currentCartCount.toString();
-            const response = await fetch('http://localhost:3000/carts', {
+            const response = await fetch('http://localhost:3000/api/v1/medicine-orders', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(medicine)
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${auth.accessToken}`
+                  },
+                body: JSON.stringify(request)
             })
             await response.json()
         } catch (error) {
-            console.error('Error creating menu:', error)
+            console.error('Error adding cart:', error)
         }
     }
 
-    return {medicineItems, fetchMedicineItems, getDetail,fetchMedicineItemsFilter, fetchCartItems, addCart}
-    // return {menuItems, fetchMenuItems, createMenu, editMenu, getDetail}
+    async function checkProductInCart(id){
+        try {
+            const response = await fetch(`http://localhost:3000/api/v1/medicine-orders/medicines/${id}/check`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${auth.accessToken}`
+                  },
+            })
+            const responseData = await response.json()
+            const data = responseData.data
+            return data;
+        } catch (error) {
+            console.error('Error check product in cart:', error)
+        }
+    }
+
+    async function deleteCart(id){
+        try {
+            const response = await fetch(`http://localhost:3000/api/v1/medicine-orders/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${auth.accessToken}`
+                  },
+            })
+            const responseData = await response.json()
+            const data = responseData.data
+            return data;
+        } catch (error) {
+            console.error('Error delete product in cart:', error)
+        }
+    }
+    
+    async function updateCountOrder(request){
+        try {
+            const response = await fetch(`http://localhost:3000/api/v1/medicine-orders/${request.medicineOrderId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${auth.accessToken}`
+                  },
+                body: JSON.stringify({
+                    quantity: request.quantity})
+            })
+            await response.json()
+        } catch (error) {
+            console.error('Error update quantity cart:', error)
+        }
+    }
+
+    return {
+        isLoading, 
+        medicineItems, 
+        pagination, 
+        fetchMedicineItems, 
+        getDetail, 
+        getCategory,
+        fetchCartItems, 
+        addCart, 
+        checkProductInCart,
+        deleteCart, 
+        updateCountOrder,
+    }
 })

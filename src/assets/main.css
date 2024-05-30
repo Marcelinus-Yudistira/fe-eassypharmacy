@@ -87,3 +87,46 @@ a,
 .text-justify {
   text-align: justify;
 }
+
+.toast {
+  position: fixed;
+  /* top: 10px; */
+  right: 10px;
+  z-index: 1000;
+  display: none;
+}
+
+.toast.show {
+  display: block;
+}
+
+.card-text {
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis; 
+}
+
+.invalid-input { 
+  font-size: 10px;
+  color: crimson;
+}
+
+.is-clickable{
+  cursor: pointer;
+}
+
+.is-disabled{
+  opacity: 0.5;
+  cursor: not-allowed !important; 
+  pointer-events: none;
+}
+
+.image-placeholder{
+  height: 150px;
+}
+
+.all-center{
+  display: flex;
+  align-items: center;
+  justify-content: center
+}

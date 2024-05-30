@@ -12,7 +12,7 @@
                         <button type="button" @click="submitSearch" class="btn btn-primary"><i class="bi bi-search"></i></button>
                     </div>
                 </div>
-                <ul class="navbar-nav mb-2 mb-lg-0" v-if="!isLoggedIn">
+                <ul class="navbar-nav mb-2 mb-lg-0" v-if="isLoggedIn">
                     <li class="nav-item">
                         <router-link to="/cart" class="nav-link p-1 fs-3 ms-2 me-2"><i class="bi bi-cart"></i></router-link>
                     </li>
@@ -22,21 +22,22 @@
                             <div class="p-1 fs-3 dropdown-toggle" type="button" href="" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-person-circle"></i></div>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="#">Profile</a></li>
-                                <li><a class="dropdown-item" href="#">Logout</a></li>
+                                <li><a class="dropdown-item" href="#" type="button" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</a></li>
                             </ul>
                         </div>
                     </li>
                 </ul>
-                <button v-if="$route.name === 'register'" class="btn btn-outline-success" @click="this.$router.push('login')">Login</button>
-                <button v-if="$route.name === 'login'" class="btn btn-outline-success" @click="this.$router.push('register')">Register</button>
+                <button v-if="!isLoggedIn && $route.name !== 'login' && $route.name !== 'register'" class="btn btn-outline-success" @click="this.$router.push({name: 'login'})">Login</button>
+                <button v-if="$route.name === 'register'" class="btn btn-outline-success" @click="this.$router.push({name: 'login'})">Login</button>
+                <button v-if="$route.name === 'login'" class="btn btn-outline-success" @click="this.$router.push({name: 'register'})">Register</button>
             </div>
         </div>
     </nav>
 </template>
 
 <script setup>
-import { ref, defineEmits, watch } from 'vue';
-import { useAuthStore } from '@/stores/auth';
+import { ref, defineEmits, watch, onMounted } from 'vue';
+import { useAuthStore } from '@/stores/authentication';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -44,6 +45,10 @@ const auth = useAuthStore()
 
 const searchTerm = ref('');
 const isLoggedIn = ref('');
+
+const props = defineProps({ 
+  resetSearch: Boolean
+});
 
 const submitSearch = () => {
   const data = searchTerm.value
@@ -55,11 +60,17 @@ watch(() => auth.isLoggedIn, (newValue) => {
   isLoggedIn.value = newValue;
 });
 
-async function logout() {
-    console.log('masuk');
-  if (window.confirm('Apakah Anda yakin ingin logout?')) {
-    await auth.logout(); 
-    router.push('login');
+watch(() => props.resetSearch, (newValue) => {
+  if (newValue) {
+    console.log('mlebu kah?');
+    searchTerm.value = null
   }
-};
+});
+
+onMounted(() => {
+    const tokenRefresh = localStorage.getItem('token');
+    if(tokenRefresh){
+        isLoggedIn.value = true;
+    }
+})
 </script>

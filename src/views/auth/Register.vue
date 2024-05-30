@@ -11,80 +11,125 @@
                 <div class="mb-3">
                   <div class="card-header bg-white mb-3 ps-0"><h5>Selamat Datang !</h5></div>
                   <label for="username" class="form-label">Username</label>
-                  <input type="username" class="form-control" id="username" v-model="userData.username" required>
-                  <div class="invalid-feedback" v-if="!usernameIsValid">Username harus diisi.</div>
+                  <input type="username" class="form-control" :class="!usernameIsValid ? 'is-invalid' : ''" id="username" v-model="userData.username">
+                  <p class="text-danger" v-if="!usernameIsValid">{{ usernameValidationMessage }}</p>
                 </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
-                  <input type="email" class="form-control" id="email" v-model="userData.email" required>
-                  <div class="invalid-feedback" v-if="!emailIsValid">Email harus diisi.</div>
+                  <input class="form-control" id="email" :class="!emailIsValid ? 'is-invalid' : ''" v-model="userData.email">
+                  <p class="text-danger" v-if="!emailIsValid">{{ emailValidationMessage }}</p>
                 </div>
                 <div class="mb-3">
                   <label for="password" class="form-label">Password</label>
-                  <input type="password" class="form-control" id="password" v-model="userData.password" required>
-                  <div class="invalid-feedback" v-if="!passwordIsValid">Password harus diisi.</div>
+                  <input type="password" class="form-control" :class="!passwordIsValid ? 'is-invalid' : ''" id="password" v-model="userData.password">
+                  <p class="text-danger" v-if="!passwordIsValid">{{ passwordValidationMessage }}</p>
                 </div>
                 <div class="mb-3">
                   <label for="phoneNumber" class="form-label">Phone Number</label>
-                  <input type="phoneNumber" class="form-control" id="phoneNumber" v-model="userData.phoneNumber" required>
-                  <div class="invalid-feedback" v-if="!passwordIsValid">Phone Number harus diisi.</div>
+                  <input type="phoneNumber" class="form-control" :class="!phoneNumberIsValid ? 'is-invalid' : ''" id="phoneNumber" v-model="userData.phoneNumber">
+                  <p class="text-danger" v-if="!phoneNumberIsValid">{{ phoneNumberValidationMessage }}</p>
+                </div>
+                <div class="mb-3">
+                  <label for="address" class="form-label">Address</label>
+                  <input type="address" class="form-control" :class="!addressIsValid ? 'is-invalid' : ''" id="address" v-model="userData.address">
+                  <p class="text-danger" v-if="!addressIsValid">{{ addressValidationMessage }}</p>
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Daftar</button>
               </form>
-              <p class="mt-3">Sudah memiliki akun? silahkan <a href="/login">Masuk</a></p>
+              <p class="mt-3">Sudah memiliki akun? silahkan <span class="is-clickable text-decoration-underline text-primary" @click="this.$router.push('login')">Masuk</span></p>
             </div>
           </div>
         </div>
       </div>
+      <ToastComponent :messages="toastMessages" :status="toastStatus"></ToastComponent>
     </div>
   </template>
   
   <script setup>
   import { onMounted, ref } from 'vue';
-  import { useAuthStore } from '@/stores/auth';
+  import { useAuthStore } from '@/stores/authentication';
   import { useRouter } from 'vue-router';
-import { storeToRefs } from 'pinia';
-
+  import ToastComponent from '../../components/ToastComponent.vue';
   
-  const userData = ref('');
-  const usernameIsValid = ref(true);
-  const emailIsValid = ref(true);
-  const passwordIsValid = ref(true);
-
   const router = useRouter();
+  const auth = useAuthStore();
 
-  const auth = useAuthStore()
+  const toastLiveExample = ref(null)
+  const toastBootstrap = ref(null)
+  let toastStatus = ref(true)
+  let toastMessages = ref('')
 
-  const {isLoggedIn} = storeToRefs(auth)
-
+  const userData = ref('');
+  
   userData.value = {
     username : '',
     email : '',
     password: '',
-    phoneNumber: ''
-  }
-  
-  async function register() {
-    console.log(userData.value);
-    // Validasi
-    usernameIsValid.value = userData.value.username !== '';
-    emailIsValid.value = userData.value.email !== '';
-    passwordIsValid.value = userData.value.password !== '';
-  
-    if (emailIsValid.value && passwordIsValid.value && usernameIsValid.value) {
-      try{
-        await auth.register(userData.value);
-        alert('Registrasi berhasil! Silakan login untuk melanjutkan.');
-        router.push('/login');
-      }catch(error){
-        console.error('Error during registration:', error);
-      }
-      
-    }
+    phoneNumber: '',
+    address: ''
   }
 
-  onMounted( () => {
-    console.log(isLoggedIn,'<<<<');
-  })
+  const emailIsValid = ref(true);
+  const passwordIsValid = ref(true);
+  const usernameIsValid = ref(true);
+  const addressIsValid = ref(true);
+  const phoneNumberIsValid = ref(true);
+
+  let emailValidationMessage = ref('');
+  let passwordValidationMessage = ref('');
+  let phoneNumberValidationMessage = ref('');
+  let addressValidationMessage = ref('');
+  let usernameValidationMessage = ref('');
+  
+  const validateEmail = (email) => {
+    return email !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  const validatePassword = (password) => {
+    return password !== '' && password.length >= 6;
+  }
+
+  const validateEmptyValue = (value) => {
+    return value !== ''
+  }
+
+  const validationForm = (userData) => {
+    emailIsValid.value = validateEmail(userData.email)
+    passwordIsValid.value = validatePassword(userData.password)
+    usernameIsValid.value = validateEmptyValue(userData.username)
+    addressIsValid.value = validateEmptyValue(userData.address)
+    phoneNumberIsValid.value = validateEmptyValue(userData.phoneNumber)
+
+    if(userData.email == '') emailValidationMessage.value ='Email tidak boleh kosong!'
+    else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userData.email)) emailValidationMessage.value ='Format email tidak valid!'
+
+    if(userData.password == '') passwordValidationMessage.value ='Password tidak boleh kosong!'
+    else if(userData.password.length <= 6) passwordValidationMessage.value ='Panjang password minimal 6 karakter!'
+
+    if(userData.username == '') usernameValidationMessage.value ='Username tidak boleh kosong!'
+
+    if(userData.address == '') addressValidationMessage.value ='Address tidak boleh kosong!'
+
+    if(userData.phoneNumber == '') phoneNumberValidationMessage.value ='Phone Number tidak boleh kosong!'
+  }
+
+  async function register() {
+    validationForm(userData.value)
+    toastLiveExample.value = document.getElementById('liveToast')
+    toastBootstrap.value = new bootstrap.Toast(toastLiveExample.value)
+  
+    if (emailIsValid.value && passwordIsValid.value && usernameIsValid.value && addressIsValid.value && phoneNumberIsValid.value) {
+      try{
+        await auth.register(userData.value);
+        router.push('/login');
+        toastMessages.value = 'Berhasil Register'
+        toastBootstrap.value.show()
+      }catch(error){
+        toastMessages.value = error.message
+        toastStatus.value = false
+        toastBootstrap.value.show()
+      }
+    }
+  }
   </script>
   
