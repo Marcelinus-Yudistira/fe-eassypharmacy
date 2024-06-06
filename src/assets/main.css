@@ -130,3 +130,9 @@ a,
   align-items: center;
   justify-content: center
 }
+
+.vertical-center{
+  display: flex;
+  align-items: center;
+}
+

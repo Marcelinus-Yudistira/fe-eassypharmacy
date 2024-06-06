@@ -5,7 +5,7 @@
             <div class="col-8">
                 <div class="card mb-3" style="max-width: auto;">
                     <div class="card-header fs-5 fw-semibold bg-primary text-white">Daftar Produk</div>
-                    <ul class="list-group list-group-flush">
+                    <ul v-if="cartMedicines.length > 0" class="list-group list-group-flush">
                         <div v-for="i in cartMedicines" :key="i.id">
                             <li class="list-group-item">
                                 <div class="row g-0">
@@ -47,6 +47,9 @@
                             </li>
                         </div>
                     </ul>
+                    <ul v-else class="list-group list-group-flush">
+                        <li class="list-group-item">Belum ada data</li>
+                    </ul>
                 </div>
             </div>
             <div class="col-4">
@@ -76,7 +79,10 @@
                             <p class="card-text text-end fw-semibold">{{ sumTotal  }},00</p>
                         </div>
                     </div>
-                    <button class="btn btn-primary w-100" @click="this.$router.push('transaction')">Checkout</button>
+                    <div v-if="cartMedicines.length >= 1">
+                        <router-link to="/transaction"><button class="btn btn-primary w-100">Checkout</button></router-link>
+                    </div>
+                    <button v-else class="btn btn-primary w-100 is-disabled">Checkout</button>
                 </div>
                 </div>
             </div>

@@ -65,7 +65,7 @@ export const useAuthStore = defineStore('authStore', () => {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${accessToken.value}`
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
           });
           const responseData = await response.json()

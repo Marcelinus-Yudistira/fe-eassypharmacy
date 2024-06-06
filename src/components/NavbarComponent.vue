@@ -6,7 +6,7 @@
             <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse is-content-end" id="navbarSupportedContent">
-                <div v-if="$route.name !== 'login' && $route.name !== 'register'" class="d-flex">
+                <div v-if="$route.name === 'home'" class="d-flex">
                     <div class="input-group me-2" @submit.prevent="submitSearch">
                         <input type="search" v-model="searchTerm" class="form-control m-rounded-left" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
                         <button type="button" @click="submitSearch" class="btn btn-primary"><i class="bi bi-search"></i></button>
@@ -21,7 +21,7 @@
                         <div class="dropdown">
                             <div class="p-1 fs-3 dropdown-toggle" type="button" href="" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-person-circle"></i></div>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Profile</a></li>
+                                <li><a class="dropdown-item" href="#" @click="this.$router.push({name: 'profile'})">Profile</a></li>
                                 <li><a class="dropdown-item" href="#" type="button" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</a></li>
                             </ul>
                         </div>

@@ -59,7 +59,7 @@ export const useMedicineStore = defineStore('medicineStore', () => {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${auth.accessToken}`
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                   },
             })
             const responseData = await response.json()
@@ -77,7 +77,7 @@ export const useMedicineStore = defineStore('medicineStore', () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${auth.accessToken}`
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                   },
                 body: JSON.stringify(request)
             })
@@ -93,7 +93,7 @@ export const useMedicineStore = defineStore('medicineStore', () => {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${auth.accessToken}`
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                   },
             })
             const responseData = await response.json()
@@ -110,7 +110,7 @@ export const useMedicineStore = defineStore('medicineStore', () => {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${auth.accessToken}`
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                   },
             })
             const responseData = await response.json()
@@ -127,7 +127,7 @@ export const useMedicineStore = defineStore('medicineStore', () => {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${auth.accessToken}`
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                   },
                 body: JSON.stringify({
                     quantity: request.quantity})
@@ -135,6 +135,72 @@ export const useMedicineStore = defineStore('medicineStore', () => {
             await response.json()
         } catch (error) {
             console.error('Error update quantity cart:', error)
+        }
+    }
+
+    async function createOrder(orderIds){
+        try {
+            const response = await fetch('http://localhost:3000/api/v1/orders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                  },
+                body: JSON.stringify({
+                    medicineOrderIds: orderIds})
+            })
+            await response.json()
+        } catch (error) {
+            console.error('Error store order medicine:', error)
+        }
+    }
+
+    async function fetchOrder(){
+        try {
+            const response = await fetch('http://localhost:3000/api/v1/orders', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                  },
+            })
+            const responseData = await response.json()
+            const data = responseData.data
+            return data;
+        } catch (error) {
+            console.error('Error fetch order medicine:', error)
+        }
+    }
+
+    async function changeAddressOrder(request){
+        try {
+            const response = await fetch(`http://localhost:3000/api/v1/orders/${request.orderId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                  },
+                body: JSON.stringify({
+                    address: request.address})
+            })
+            await response.json()
+        } catch (error) {
+            console.error('Error update address order:', error)
+        }
+    }
+
+    async function cancelOrder(id) {
+        try {
+            const response = await fetch(`http://localhost:3000/api/v1/orders/${id}/cancel`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                  },
+            })
+            await response.json()
+        } catch (error) {
+            console.error('Error canceling order', error)
         }
     }
 
@@ -150,5 +216,9 @@ export const useMedicineStore = defineStore('medicineStore', () => {
         checkProductInCart,
         deleteCart, 
         updateCountOrder,
+        createOrder,
+        fetchOrder,
+        changeAddressOrder,
+        cancelOrder
     }
 })

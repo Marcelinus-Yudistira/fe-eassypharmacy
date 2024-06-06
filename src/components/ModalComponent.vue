@@ -1,7 +1,7 @@
 <template>
-    <div class="modal fade" :id="modalId" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
+    <div class="modal fade" :id="modalId" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 600px;">
+            <div class="modal-content" >
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" :id="modalLabel">{{ title }}</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -11,12 +11,17 @@
                     <slot></slot>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ cancelButtonText }}</button>
-                    <button v-if="!isLoading" type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="handleFunction">{{ approveButtonText }}</button>
-                    <button v-else class="btn btn-primary w-100" type="button" disabled>
-                        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-                        <span role="status"> {{ approveButtonText }}...</span>
-                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="handleCancel">{{ cancelButtonText }}</button>
+                    <div v-if="isDisabled">
+                      <button type="button" class="btn btn-primary is-disabled">{{ approveButtonText }}</button>
+                    </div>
+                    <div v-else>
+                      <button v-if="!isLoading" type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="handleFunction">{{ approveButtonText }}</button>
+                      <button v-else class="btn btn-primary w-100" type="button" disabled>
+                          <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                          <span role="status"> {{ approveButtonText }}...</span>
+                      </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -48,7 +53,14 @@ const props = defineProps({
   functionHandler: {
     type: Function
   },
+  cancelHandler: {
+    type: Function
+  },
   isLoading: {
+    type: Boolean,
+    default: false
+  },
+  isDisabled: {
     type: Boolean,
     default: false
   }
@@ -56,5 +68,11 @@ const props = defineProps({
 
 const handleFunction = () => {
     props.functionHandler();
+};
+
+const handleCancel = () => {
+  if(props.cancelHandler){
+    props.cancelHandler();
+  }
 };
 </script>
