@@ -1,11 +1,12 @@
 <template>
     <div class="container">
-      <div class="row vh-90">
+      <div class="row" :class=" isWeb ? 'vh-80' : 'mt-250'">
         <div class="col d-flex align-items-center justify-content-center">
-          <h4>Logo EassyPharmacy</h4>
+          <img v-if="isWeb" src="/src/assets/logo.png" alt="logo" width="400px">
+          <img v-else src="/src/assets/logo2-1.png" class="ps-5 pe-5 mb-5" alt="logo" width="300px">
         </div>
         <div class="col d-flex align-items-center">
-          <div class="card w-70">
+          <div class="card w-70" :class=" !isWeb ? 'w-100': 'mt-5' ">
             <div class="card-body">
               <form @submit.prevent="register">
                 <div class="mb-3">
@@ -131,5 +132,14 @@
       }
     }
   }
-  </script>
+
+  
+const width = ref(window.innerWidth);
+const isWeb = ref(window.innerWidth > 767 ? true : false)
+
+window.addEventListener('resize', () => {
+  width.value = window.innerWidth;
+  isWeb.value = window.innerWidth > 767 ? true : false
+});
+</script>
   

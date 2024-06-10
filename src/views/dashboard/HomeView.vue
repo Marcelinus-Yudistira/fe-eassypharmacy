@@ -1,16 +1,16 @@
 <template>
   <div class="menu container">
     <div class="row mt-5">
-      <div class="col-2">
+      <div :class="isWeb ? 'col-2' : 'col-5'">
         <div class="card border-dark-subtle mb-3" style="max-width: auto;">
-          <div class="card-header fs-5 fw-semibold">Kategori Obat</div>
+          <div class="card-header fs-6 fw-semibold">Kategori Obat</div>
             <div class="card-body p-0">
               <div class="list-group">
-                <a href="#" type="button" @click="fetchByCategory({ id: null, name: 'Semua Obat' })" class="list-group-item list-group-item-action list-group-item-light">
+                <a href="#" type="button" @click="fetchByCategory({ id: null, name: 'Semua Obat' })" class="list-group-item list-group-item-action list-group-item-light" :class="isWeb ? '' : 'mobile-fs'">
                   Semua Kategori
                 </a>
                 <div v-for="category in categories" :key="category.id">
-                  <a href="#" type="button" @click="fetchByCategory(category)" class="list-group-item list-group-item-action list-group-item-light">
+                  <a href="#" type="button" @click="fetchByCategory(category)" class="list-group-item list-group-item-action list-group-item-light" :class="isWeb ? '' : 'mobile-fs'">
                     {{ category.name }}
                   </a>
                 </div>
@@ -19,13 +19,13 @@
         </div>
 
         <div class="card border-dark-subtle mb-3 mt-4" style="max-width: auto;">
-          <div class="card-header fs-5 fw-semibold">Urutkan Data</div>
+          <div class="card-header fs-6 fw-semibold">Urutkan Data</div>
             <div class="card-body p-0">
               <div class="list-group">
                 <div class="list-group-item">
                   <div class="form-check is-clickable">
                     <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked value="ASC" v-model="selectedSorting">
-                    <label class="form-check-label" for="flexRadioDefault1">
+                    <label class="form-check-label" :class="isWeb ? '' : 'mobile-fs'" for="flexRadioDefault1">
                       Ascending (A-Z)
                     </label>
                   </div>
@@ -33,7 +33,7 @@
                 <div class="list-group-item">
                   <div class="form-check is-clickable">
                     <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2"  value="DESC" v-model="selectedSorting">
-                    <label class="form-check-label" for="flexRadioDefault2">
+                    <label class="form-check-label" :class="isWeb ? '' : 'mobile-fs'" for="flexRadioDefault2">
                       Descending (Z-A)
                     </label>
                   </div>
@@ -41,24 +41,25 @@
               </div>
           </div>
         </div>
-        <button class="btn btn-primary w-100" @click="fetchBySorting()">Terapkan</button>
+        <button class="btn btn-primary w-100" :class="isWeb ? '' : 'mobile-btn'" @click="fetchBySorting()">Terapkan</button>
       </div>
-      <div class="col-10" v-if="medicines.length > 0">
+      <div :class="isWeb ? 'col-10' : 'col-7'" v-if="medicines.length > 0">
         <ListMedicine 
           :medicines="medicines" 
           @select-medicine="selectMedicine" 
           :isLoading="isLoading" 
           :totalData="pagination?.totalData" 
           :categorySelect="selectedCategory"
+          :isMobile="isWeb ? false : true"
         />
         <nav aria-label="Page navigation example">
-          <ul class="pagination justify-content-end mt-5">
+          <ul class="pagination justify-content-end" :class="isWeb ? 'mt-5' : 'mt-3 me-3'">
             <li class="page-item" :class="{disabled: pagination?.currentPage == 1}">
-              <a class="page-link" href="#" @click="changePage('prev')">Previous</a>
+              <a class="page-link" :class="isWeb ? '' : 'mobile-fs'" href="#" @click="changePage('prev')">Previous</a>
             </li>
-            <li class="page-item"><a class="page-link">{{ pagination?.currentPage }}</a></li>
+            <li class="page-item"><a class="page-link" :class="isWeb ? '' : 'mobile-fs'" >{{ pagination?.currentPage }}</a></li>
             <li class="page-item" :class="{disabled: pagination?.currentPage == pagination?.totalPage}">
-              <a class="page-link" href="#" @click="changePage('next')">Next</a>
+              <a class="page-link" :class="isWeb ? '' : 'mobile-fs'" href="#" @click="changePage('next')">Next</a>
             </li>
           </ul>
         </nav>
@@ -94,6 +95,14 @@ const props = defineProps({
   searchTerm: String
 });
 
+const width = ref(window.innerWidth);
+const isWeb = ref(window.innerWidth > 767 ? true : false)
+
+window.addEventListener('resize', () => {
+  width.value = window.innerWidth;
+  isWeb.value = window.innerWidth > 767 ? true : false
+});
+
 const emit = defineEmits(['resetSearch']);
 
 async function fetchData() {
@@ -108,6 +117,7 @@ async function fetchData() {
 
 async function fetchByKeyword() {
   isLoading.value = true
+  selectedSorting.value = 'ASC'
   resetSearchKeyword.value = false
   emit('resetSearch', false);
   medicines.value = await medicineStore.fetchMedicineItems({keyword: props.searchTerm});
@@ -117,6 +127,7 @@ async function fetchByKeyword() {
 
 async function fetchByCategory(item){
   isLoading.value = true
+  selectedSorting.value = 'ASC'
   if (item.id == null) fetchData()
   else medicines.value = await medicineStore.fetchMedicineItems({categoryId: item.id});
   pagination.value = medicineStore.pagination
@@ -184,6 +195,7 @@ const changePage = async (action) => {
   }
   isLoading.value = false
 }
+
 
 </script>
 

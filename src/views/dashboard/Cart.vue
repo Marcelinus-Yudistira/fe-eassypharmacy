@@ -1,8 +1,8 @@
 <template>
     <div class="container mt-5">
         <div class="row">
-            <h3 class="mb-3">Cart</h3>
-            <div class="col-8">
+            <h3 class="mb-3" :class="isWeb ? '' : 'fs-5'">Cart</h3>
+            <div :class="isWeb ? 'col-8' : 'col-12'">
                 <div class="card mb-3" style="max-width: auto;">
                     <div class="card-header fs-5 fw-semibold bg-primary text-white">Daftar Produk</div>
                     <ul v-if="cartMedicines.length > 0" class="list-group list-group-flush">
@@ -19,7 +19,7 @@
                                                 <div class="col-9">
                                                     <h5 class="card-title">{{ i.Medicine.name }}</h5>
                                                     <p class="card-text"><small class="text-body-secondary">{{ i.Medicine.description }}</small></p>
-                                                    <p class="card-text">Rp. {{ i.Medicine.price }},00</p>
+                                                    <p class="card-text">{{ currencyFormat(i.Medicine.price ?? 0) }}</p>
                                                     <p class="card-text">Stok : {{ i.Medicine.stock }} buah</p>
                                                 </div>
                                                 <div class="col-3">
@@ -52,7 +52,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="col-4">
+            <div :class="isWeb ? 'col-4' : 'col-12'">
                 <div class="card border-primary mb-3" style="max-width: auto; height: fit-content;">
                 <div class="card-header fs-5 fw-semibold">Detail Harga ({{ cartMedicines.length }} Produk)</div>
                 <div class="card-body text-primary">
@@ -66,7 +66,7 @@
                                 <p class="card-text text-end">Rp.</p>
                             </div>
                             <div class="col-4">
-                                <p class="card-text text-end">{{ i.subTotal }},00</p>
+                                <p class="card-text text-end">{{ currencyFormat(i.subTotal ?? 0, false) }}</p>
                             </div>
                         </div>
                     </div>
@@ -76,7 +76,7 @@
                             <p class="card-text text-end">Rp.</p>
                         </div>
                         <div class="col-4">
-                            <p class="card-text text-end fw-semibold">{{ sumTotal  }},00</p>
+                            <p class="card-text text-end fw-semibold">{{ currencyFormat(sumTotal ?? 0, false) }}</p>
                         </div>
                     </div>
                     <div v-if="cartMedicines.length >= 1">
@@ -108,11 +108,16 @@
     import ModalComponent from '../../components/ModalComponent.vue';
     import { useMedicineStore } from '@/stores/medicine';
     import ToastComponent from '../../components/ToastComponent.vue';
+    import { useAuthStore } from '@/stores/authentication';
+    import { useRouter } from 'vue-router';
+    import { currencyFormat } from '@/common.js';
 
     const medicineStore = useMedicineStore()
     const selectedItem = ref(null);
     const isLoading = ref(false);
     const cartMedicines = ref([]);
+    const auth = useAuthStore()
+    const router = useRouter()
 
     const setSelectedItem = (item) => {
         selectedItem.value = item;
@@ -144,6 +149,10 @@
     async function fetchData() {
         isLoading.value = true
         cartMedicines.value = await medicineStore.fetchCartItems();
+        if(!auth.isLoggedIn){
+            sessionStorage.setItem('errorMessage', 'Silahkan Login terlebih dahulu!');
+            router.push({name: 'login'})
+        }
         isLoading.value = false
     }
 
@@ -165,8 +174,16 @@
         await fetchData()
     }
 
-onMounted(async () => {
-  await fetchData()
-})
+    onMounted(async () => {
+        await fetchData()
+    })
+
+    const width = ref(window.innerWidth);
+    const isWeb = ref(window.innerWidth > 767 ? true : false)
+
+    window.addEventListener('resize', () => {
+        width.value = window.innerWidth;
+        isWeb.value = window.innerWidth > 767 ? true : false
+    });
 </script>
 

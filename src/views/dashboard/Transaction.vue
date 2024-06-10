@@ -35,13 +35,13 @@
                         <p class="m-0">{{ i.Medicine.name }}</p>
                     </div>
                     <div class="col-2 vertical-center">
-                        <p class="m-0">Rp. {{ i.Medicine.price }},00</p>
+                        <p class="m-0">{{ currencyFormat(i.Medicine.price ?? 0) }}</p>
                     </div>
                     <div class="col-2 vertical-center">
                         <p class="m-0">{{ i.count }}</p>
                     </div>
                     <div class="col-2 vertical-center">
-                        <p class="text-end">Rp. {{ i.subTotal }},00</p>
+                        <p class="text-end">{{ currencyFormat(i.subTotal ?? 0) }}</p>
                     </div>
                 </div>
                 <div class="row mt-3 mb-3">
@@ -49,7 +49,7 @@
                     <h6 class="text-end me-5">Total Biaya :</h6>
                   </div>
                   <div class="col-2">
-                    <h6>Rp. {{ sumTotal }},00</h6>
+                    <h6>{{ currencyFormat(sumTotal ?? 0) }}</h6>
                   </div>
                 </div>
             </li>
@@ -64,7 +64,7 @@
                         <h6>Pengiriman Reguler</h6>
                         <p class="mb-1">Jakarta - Surabaya</p>
                         <p class="mb-1"><span class="fw-semibold">Estimasi </span>: 2-3 Hari</p>
-                        <p class="mb-1"><span class="fw-semibold">Biaya Pengiriman </span>: Rp. 2500,00</p>
+                        <p class="mb-1"><span class="fw-semibold">Biaya Pengiriman </span>: {{ currencyFormat(25000) }}</p>
                     </div>
                 </div>
             </li>
@@ -115,6 +115,7 @@
   import { useAuthStore } from '@/stores/authentication';
   import { useMedicineStore } from '@/stores/medicine';
   import { useRoute, useRouter } from 'vue-router';
+  import { currencyFormat } from '@/common.js';
   
   const auth = useAuthStore()
   const medicineStore = useMedicineStore()
@@ -127,6 +128,10 @@
   async function fetchData() {
     isLoading.value = true
     medicineCart.value = await medicineStore.fetchCartItems();
+    if(!auth.isLoggedIn){
+        sessionStorage.setItem('errorMessage', 'Silahkan Login terlebih dahulu!');
+        router.push({name: 'login'})
+    }
     userProfile.value = await auth.getUserData()
     isLoading.value = false
   }

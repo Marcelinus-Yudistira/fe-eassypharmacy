@@ -13,7 +13,8 @@ export const useMedicineStore = defineStore('medicineStore', () => {
 
     const fetchMedicineItems = async (request) => {
         try {
-            let url = 'http://localhost:3000/api/v1/medicines';
+            let url = `${import.meta.env.VITE_APP_DOMAIN}/medicines`;
+            // let url = `${process.env.VUE_APP_BACKEND_URL}/medicines`;
         
             if (request) {
                 const queryString = new URLSearchParams(request).toString();
@@ -32,7 +33,7 @@ export const useMedicineStore = defineStore('medicineStore', () => {
     };
     const getDetail = async (id) => {
         try {
-            const response = await fetch(`http://localhost:3000/api/v1/medicines/${id}`);
+            const response = await fetch(`${import.meta.env.VITE_APP_DOMAIN}/medicines/${id}`);
             const responseData = await response.json()
             const data = responseData.data
             return data;
@@ -44,7 +45,7 @@ export const useMedicineStore = defineStore('medicineStore', () => {
 
     const getCategory = async () => {
         try {
-            const response = await fetch(`http://localhost:3000/api/v1/categories`);
+            const response = await fetch(`${import.meta.env.VITE_APP_DOMAIN}/categories`);
             const responseData = await response.json()
             const data = responseData.data
             return data;
@@ -55,7 +56,7 @@ export const useMedicineStore = defineStore('medicineStore', () => {
     }
     const fetchCartItems = async () => {
         try {
-            const response = await fetch('http://localhost:3000/api/v1/medicine-orders/', {
+            const response = await fetch(`${import.meta.env.VITE_APP_DOMAIN}/medicine-orders/`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -63,6 +64,11 @@ export const useMedicineStore = defineStore('medicineStore', () => {
                   },
             })
             const responseData = await response.json()
+
+            if (response.status == 401) {
+                auth.isLoggedIn = false
+            }
+
             const data = responseData.data
             return data
         } catch (error) {
@@ -73,7 +79,7 @@ export const useMedicineStore = defineStore('medicineStore', () => {
 
     async function addCart(request) {
         try {
-            const response = await fetch('http://localhost:3000/api/v1/medicine-orders', {
+            const response = await fetch(`${import.meta.env.VITE_APP_DOMAIN}/medicine-orders`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -89,7 +95,7 @@ export const useMedicineStore = defineStore('medicineStore', () => {
 
     async function checkProductInCart(id){
         try {
-            const response = await fetch(`http://localhost:3000/api/v1/medicine-orders/medicines/${id}/check`, {
+            const response = await fetch(`${import.meta.env.VITE_APP_DOMAIN}/medicine-orders/medicines/${id}/check`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -106,7 +112,7 @@ export const useMedicineStore = defineStore('medicineStore', () => {
 
     async function deleteCart(id){
         try {
-            const response = await fetch(`http://localhost:3000/api/v1/medicine-orders/${id}`, {
+            const response = await fetch(`${import.meta.env.VITE_APP_DOMAIN}/medicine-orders/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -123,7 +129,7 @@ export const useMedicineStore = defineStore('medicineStore', () => {
     
     async function updateCountOrder(request){
         try {
-            const response = await fetch(`http://localhost:3000/api/v1/medicine-orders/${request.medicineOrderId}`, {
+            const response = await fetch(`${import.meta.env.VITE_APP_DOMAIN}/medicine-orders/${request.medicineOrderId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -140,7 +146,7 @@ export const useMedicineStore = defineStore('medicineStore', () => {
 
     async function createOrder(orderIds){
         try {
-            const response = await fetch('http://localhost:3000/api/v1/orders', {
+            const response = await fetch(`${import.meta.env.VITE_APP_DOMAIN}/orders`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -157,7 +163,7 @@ export const useMedicineStore = defineStore('medicineStore', () => {
 
     async function fetchOrder(){
         try {
-            const response = await fetch('http://localhost:3000/api/v1/orders', {
+            const response = await fetch(`${import.meta.env.VITE_APP_DOMAIN}/orders`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -165,6 +171,9 @@ export const useMedicineStore = defineStore('medicineStore', () => {
                   },
             })
             const responseData = await response.json()
+            if (response.status == 401) {
+                auth.isLoggedIn = false
+            }
             const data = responseData.data
             return data;
         } catch (error) {
@@ -174,7 +183,7 @@ export const useMedicineStore = defineStore('medicineStore', () => {
 
     async function changeAddressOrder(request){
         try {
-            const response = await fetch(`http://localhost:3000/api/v1/orders/${request.orderId}`, {
+            const response = await fetch(`${import.meta.env.VITE_APP_DOMAIN}/orders/${request.orderId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -191,7 +200,7 @@ export const useMedicineStore = defineStore('medicineStore', () => {
 
     async function cancelOrder(id) {
         try {
-            const response = await fetch(`http://localhost:3000/api/v1/orders/${id}/cancel`, {
+            const response = await fetch(`${import.meta.env.VITE_APP_DOMAIN}/orders/${id}/cancel`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

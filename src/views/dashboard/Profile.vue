@@ -57,7 +57,7 @@
                                                             <div class="col">
                                                                 <h5 class="card-title">{{ medicineOrder.Medicine.name }}</h5>
                                                                 <p class="card-text"><small class="text-body-secondary">{{ medicineOrder.Medicine.description }}</small></p>
-                                                                <p class="card-text">Rp. {{ medicineOrder.Medicine.price }},00</p>
+                                                                <p class="card-text">{{ currencyFormat(medicineOrder.Medicine.price ?? 0) }}</p>
                                                                 <p class="card-text">Jumlah Pesanan : {{ medicineOrder.count }} buah</p>
                                                             </div>
                                                         </div>
@@ -130,13 +130,13 @@
                                 <p class="m-0">{{ i.Medicine.name }}</p>
                             </div>
                             <div class="col-3 vertical-center">
-                                <p class="m-0">Rp. {{ i.Medicine.price }},00</p>
+                                <p class="m-0">{{ currencyFormat(i.Medicine.price ?? 0) }}</p>
                             </div>
                             <div class="col-2 vertical-center">
                                 <p class="m-0">{{ i.count }}</p>
                             </div>
                             <div class="col-4 vertical-center">
-                                <p class="ms-auto">Rp. {{ i.subTotal }},00</p>
+                                <p class="ms-auto">{{ currencyFormat(i.subTotal ?? 0) }}</p>
                             </div>
                         </div>
                         <div class="row mt-3">
@@ -144,7 +144,7 @@
                                 <h6 class="text-start me-5">Total Biaya :</h6>
                             </div>
                             <div class="col-4">
-                                <h6 class="text-end">Rp. {{ sumTotal }},00</h6>
+                                <h6 class="text-end">{{ currencyFormat(sumTotal ?? 0) }}</h6>
                             </div>
                         </div>
                     </li>
@@ -183,13 +183,13 @@
                                     <p class="m-0">{{ i.Medicine.name }}</p>
                                 </div>
                                 <div class="col-3 vertical-center">
-                                    <p class="m-0">Rp. {{ i.Medicine.price }},00</p>
+                                    <p class="m-0">{{ currencyFormat(i.Medicine.price ?? 0) }}</p>
                                 </div>
                                 <div class="col-2 vertical-center">
                                     <p class="m-0">{{ i.count }}</p>
                                 </div>
                                 <div class="col-3 vertical-center">
-                                    <p class="ms-auto">Rp. {{ i.subTotal }},00</p>
+                                    <p class="ms-auto">{{ currencyFormat(i.subTotal ?? 0) }}</p>
                                 </div>
                             </div>
                             <div class="row mt-3">
@@ -197,7 +197,7 @@
                                     <h6 class="text-start me-5">Total Biaya :</h6>
                                 </div>
                                 <div class="col-4">
-                                    <h6 class="text-end">Rp. {{ sumTotal }},00</h6>
+                                    <h6 class="text-end">{{ currencyFormat(sumTotal) }}</h6>
                                 </div>
                             </div>
                         </li>
@@ -239,6 +239,7 @@ import ToastComponent from '../../components/ToastComponent.vue';
 import { useAuthStore } from '@/stores/authentication';
 import { useMedicineStore } from '@/stores/medicine';
 import { useRoute, useRouter } from 'vue-router';
+import { currencyFormat } from '@/common.js';
 
   const auth = useAuthStore()
   const medicineStore = useMedicineStore()
@@ -266,6 +267,11 @@ import { useRoute, useRouter } from 'vue-router';
     isLoading.value = true
     orderMedicines.value = await medicineStore.fetchOrder();
     userProfile.value = await auth.getUserData()
+    console.log(auth.isLoggedIn, '<<<<<<<');
+    if(!auth.isLoggedIn){
+        sessionStorage.setItem('errorMessage', 'Silahkan Login terlebih dahulu!');
+        router.push({name: 'login'})
+    }
     isLoading.value = false
   }
 

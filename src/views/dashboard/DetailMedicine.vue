@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <div v-if="isWeb">
       <div v-if="!isLoading">
         <div class="row m-mt-content">
           <div class="col-3">
@@ -8,8 +9,9 @@
           <div class="col-7">
             <h3>{{ medicine.name }}</h3>
             <p class="mb-1">Stok : {{ medicine.stock }}</p>
-            <p class="fs-5">Harga : Rp. {{ medicine.price }}</p>
-  
+            <p class="fs-5">Harga : {{ currencyFormat(medicine.price ?? 0) }}
+            </p>
+
             <button v-if="isLoggedIn" class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#cartModal" >Tambah ke Keranjang</button>
             <button v-else class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#mustLoginModal">Tambah ke Keranjang</button>
             <div class="mt-5">
@@ -39,7 +41,8 @@
                   <img :src="medicine.image" class="card-img-top-side" alt="...">
                   <div class="card-body bg-dark-subtle m-rounded-bottom">
                     <h5 class="card-title">{{ medicine.name }}</h5>
-                    <p class="card-text fw-medium">Harga : Rp. {{ medicine.price }},00</p>
+                    <p class="card-text fw-medium">Harga : {{ currencyFormat(medicine.price ?? 0) }}
+                    </p>
                     <div class="row">
                       <div class="col-4">
                         <button class="btn btn-sm btn-primary w-100 ps-2"><i class="bi bi-cart"></i></button>
@@ -67,7 +70,7 @@
               <p class="fs-5 class placeholder col-12"></p>
               <button class="btn btn-primary disabled placeholder col-3 mt-4"></button>
             </div>
-  
+
             <div class="mt-5 placeholder-glow">
               <h5 class="mb-1 placeholder col-6"></h5>
               <p class="placeholder mb-0 col-12"></p>
@@ -122,6 +125,153 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <div v-else>
+      <div v-if="!isLoading">
+        <div class="row m-mt-content">
+          <div class="col-8">
+            <h5>{{ medicine.name }}</h5>
+  
+            <img :src="medicine.image" class="rounded img-fluid mt-1" alt="...">
+    
+            <p class="mb-1 mt-2 mobile-fs">Stok : {{ medicine.stock }}</p>
+            <p class="fs-6">Harga : {{ currencyFormat(medicine.price ?? 0) }}
+            </p>
+  
+            <button v-if="isLoggedIn" class="btn btn-primary mt-2 mobile-btn" data-bs-toggle="modal" data-bs-target="#cartModal" >Tambah ke Keranjang</button>
+            <button v-else class="btn btn-primary mt-2 mobile-btn" data-bs-toggle="modal" data-bs-target="#mustLoginModal">Tambah ke Keranjang</button>
+            <div class="mt-4">
+              <h6 class="mb-1">Kategori Obat : </h6>
+              <p class="mb-4 mobile-fs">{{ medicine?.MedicineCategory?.name }}</p>
+              <h6 class="mb-1">Deskripsi : </h6>
+              <p class="mb-4 mobile-fs text-justify">{{ medicine.description }}</p>
+              <h6 class="mb-1">Indikasi Umum : </h6>
+              <p class="mb-4 mobile-fs text-justify">{{ medicine.indication }}</p>
+              <h6 class="mb-1">Komposisi : </h6>
+              <p class="mb-4 mobile-fs text-justify">{{ medicine.composition }}</p>
+              <h6 class="mb-1">Dosis : </h6>
+              <p class="mb-4 mobile-fs">{{ medicine.dose }}</p>
+              <h6 class="mb-1">Aturan Pakai : </h6>
+              <p class="mb-4 mobile-fs text-justify">{{ medicine.usage }}</p>
+              <h6 class="mb-1">Kontradiksi : </h6>
+              <p class="mb-4 mobile-fs text-justify">{{ medicine.contraIndication }}</p>
+              <h6 class="mb-1">Efek Samping : </h6>
+              <p class="mb-4 mobile-fs">{{ medicine.sideEffect }}</p>
+            </div>
+          </div>
+          <div class="col-4">
+            <p class="mobile-fs">Lihat Produk terkait</p>
+            <div v-for="medicine in medicines" :key="medicine.id" >
+              <div class="col">
+                <div class="card side-card mt-4">
+                  <img :src="medicine.image" class="card-img-top-side" style="object-fit: cover; height: 100px;" alt="...">
+                  <div class="card-body bg-dark-subtle m-rounded-bottom">
+                    <h6 class="card-title">{{ medicine.name }}</h6>
+                    <p class="card-text fw-medium mobile-fs">{{ currencyFormat(medicine.price ?? 0) }}</p>
+                    <div class="row">
+                      <div class="col-4 p-1">
+                        <button class="btn btn-sm btn-primary w-100 ps-2 mobile-btn mb-1"><i class="bi bi-cart"></i></button>
+                      </div>
+                      <div class="col-8 p-1">
+                        <button @click="selectMedicine(medicine.id)" class="btn btn-sm btn-primary w-100 mobile-btn">Detail</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-else>
+        <div class="row m-mt-content">
+          <div class="col-8 placeholder-glow">
+            <h5 class="placeholder"></h5>
+  
+            <img class=" img-placeholder placeholder col-12 mt-1" style="height: 150px;">
+    
+            <p class="mb-1 mt-2 mobile-fs placeholder"></p>
+            <p class="fs-6 placeholder"></p>
+  
+            <button v-if="isLoggedIn" class="btn btn-primary mt-2 mobile-btn disabled placeholder"></button>
+            <button v-else class="btn btn-primary mt-2 mobile-btn disabled placeholder"></button>
+            <div class="mt-4">
+              <h6 class="mb-1 placeholder col-6"></h6>
+              <p class="mb-4 mobile-fs placeholder col-12"></p>
+              <h6 class="mb-1 placeholder col-6"></h6>
+              <p class="mb-4 mobile-fs text-justify placeholder col-12"></p>
+              <h6 class="mb-1 placeholder col-6"></h6>
+              <p class="mb-4 mobile-fs text-justify placeholder col-12"></p>
+              <h6 class="mb-1 placeholder col-6"></h6>
+              <p class="mb-4 mobile-fs text-justify placeholder col-12"></p>
+              <h6 class="mb-1 placeholder col-6"></h6>
+              <p class="mb-4 mobile-fs placeholder col-12"></p>
+              <h6 class="mb-1 placeholder col-6"></h6>
+              <p class="mb-4 mobile-fs text-justify placeholder col-12"></p>
+              <h6 class="mb-1 placeholder col-6"></h6>
+              <p class="mb-4 mobile-fs text-justify placeholder col-12"></p>
+              <h6 class="mb-1 placeholder col-6"></h6>
+              <p class="mb-4 mobile-fs placeholder col-12"></p>
+            </div>
+          </div>
+          <div class="col-4 placeholder-glow">
+            <p class="mobile-fs placeholder col-12"></p>
+            <div class="col">
+              <div class="card side-card mt-4">
+                <img class="card-img-top-side img-placeholder placeholder col-12" style="object-fit: cover; height: 100px;">
+                <div class="card-body bg-dark-subtle m-rounded-bottom">
+                  <h6 class="card-title placeholder col-6"></h6>
+                  <p class="card-text fw-medium mobile-fs placeholder col-12"></p>
+                  <div class="row">
+                    <div class="col-4 p-1">
+                      <button class="btn btn-sm btn-primary w-100 ps-2 mobile-btn mb-1 disabled placeholder col-6"></button>
+                    </div>
+                    <div class="col-8 p-1">
+                      <button class="btn btn-sm btn-primary w-100 mobile-btn disabled placeholder col-6"></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card side-card mt-4">
+                <img class="card-img-top-side img-placeholder placeholder col-12" style="height: 100px;">
+                <div class="card-body bg-dark-subtle m-rounded-bottom">
+                  <h6 class="card-title placeholder col-6"></h6>
+                  <p class="card-text fw-medium mobile-fs placeholder col-12"></p>
+                  <div class="row">
+                    <div class="col-4 p-1">
+                      <button class="btn btn-sm btn-primary w-100 ps-2 mobile-btn mb-1 disabled placeholder col-6"></button>
+                    </div>
+                    <div class="col-8 p-1">
+                      <button class="btn btn-sm btn-primary w-100 mobile-btn disabled placeholder col-6"></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card side-card mt-4">
+                <img class="card-img-top-side img-placeholder placeholder col-12" style="object-fit: cover; height: 100px;" >
+                <div class="card-body bg-dark-subtle m-rounded-bottom">
+                  <h6 class="card-title placeholder col-6"></h6>
+                  <p class="card-text fw-medium mobile-fs placeholder col-12"></p>
+                  <div class="row">
+                    <div class="col-4 p-1">
+                      <button class="btn btn-sm btn-primary w-100 ps-2 mobile-btn mb-1 disabled placeholder col-6"></button>
+                    </div>
+                    <div class="col-8 p-1">
+                      <button class="btn btn-sm btn-primary w-100 mobile-btn disabled placeholder col-6"></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
       <ModalComponent
         title="Autentikasi" 
@@ -156,7 +306,8 @@
           </div>
           <div class="row mb-1">
             <div class="col-4 fw-semibold">Harga</div>
-            <div class="col-8">: <span class="ms-2">Rp. {{ medicine.price }},00</span></div>
+            <div class="col-8">: <span class="ms-2">{{ currencyFormat(medicine.price ?? 0) }}
+            </span></div>
           </div>
           <div class="row mb-1">
             <div class="col-4 fw-semibold">Stok Tersedia</div>
@@ -186,6 +337,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authentication';
 import ModalComponent from '../../components/ModalComponent.vue';
 import ToastComponent from '../../components/ToastComponent.vue';
+import { currencyFormat } from '@/common.js';
 
 const medicineStore = useMedicineStore()
 const medicine = ref([]);
@@ -272,6 +424,14 @@ async function addToCart() {
   }
   toastBootstrap.value = new bootstrap.Toast(toastLiveExample.value)
   toastBootstrap.value.show()
-  quantity.value = 0
+  quantity.value = 1
 }
+
+const width = ref(window.innerWidth);
+const isWeb = ref(window.innerWidth > 767 ? true : false)
+
+window.addEventListener('resize', () => {
+  width.value = window.innerWidth;
+  isWeb.value = window.innerWidth > 767 ? true : false
+});
 </script>

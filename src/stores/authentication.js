@@ -11,7 +11,7 @@ export const useAuthStore = defineStore('authStore', () => {
 
     const register = async (userData) => {
         try {
-            const response = await fetch('http://localhost:3000/api/v1/auth/register', {
+            const response = await fetch(`${import.meta.env.VITE_APP_DOMAIN}/auth/register`, {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json'
@@ -32,7 +32,7 @@ export const useAuthStore = defineStore('authStore', () => {
     }
     const login = async (credential) => {
         try {
-          const response = await fetch('http://localhost:3000/api/v1/auth/login', {
+          const response = await fetch(`${import.meta.env.VITE_APP_DOMAIN}/auth/login`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -51,8 +51,6 @@ export const useAuthStore = defineStore('authStore', () => {
             accessToken.value = responseData.data.accessToken;
             isLoggedIn.value = true;
             
-            console.log(isLoggedIn.value,'<<<< loged in?s');
-            
             return responseData;
 
         } catch (error) {
@@ -61,7 +59,7 @@ export const useAuthStore = defineStore('authStore', () => {
     }
     const getUserData = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/v1/profile', {
+        const response = await fetch(`${import.meta.env.VITE_APP_DOMAIN}/profile`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -69,6 +67,9 @@ export const useAuthStore = defineStore('authStore', () => {
             },
           });
           const responseData = await response.json()
+          if (response.status == 401) {
+              isLoggedIn.value = false
+          }
           const data = responseData.data
           user.value = responseData.data
           return data;

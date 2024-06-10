@@ -1,11 +1,12 @@
 <template>
   <div class="container">
-    <div class="row vh-80">
+    <div class="row" :class=" isWeb ? 'vh-80' : 'mt-250'">
       <div class="col d-flex align-items-center justify-content-center">
-        <h4>Logo EassyPharmacy</h4>
+        <img v-if="isWeb" src="/src/assets/logo.png" alt="logo" width="400px">
+        <img v-else src="/src/assets/logo2-1.png" class="ps-5 pe-5 mb-5" alt="logo" width="300px">
       </div>
       <div class="col d-flex align-items-center">
-        <div class="card w-50">
+        <div class="card w-50" :class=" !isWeb ? 'w-100': 'mt-5' ">
           <div class="card-body">
             <form @submit.prevent="login">
               <div class="mb-3">
@@ -31,6 +32,7 @@
       </div>
     </div>
     <ToastComponent :messages="toastMessages" :status="toastStatus"></ToastComponent>
+    <ToastComponent idToast="errorToast" :messages="toastMessages" :status="false"></ToastComponent>
   </div>
 </template>
 
@@ -60,6 +62,7 @@ const toastLiveExample = ref(null)
 const toastBootstrap = ref(null)
 
 const successMessages = ref(sessionStorage.getItem('successMessage') || ' ');
+const errorMessage = ref(sessionStorage.getItem('errorMessage') || ' ');
 
 const validateEmail = (email) => {
   return email !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -98,9 +101,12 @@ async function login() {
       toastMessages.value = error.message
       toastStatus.value= false
       toastBootstrap.value.show()
+      isLoading.value = false
     }
   }
 }
+
+const status = ref(false)
 
 onMounted(async () => {
   if(successMessages.value != ' '){    
@@ -109,6 +115,20 @@ onMounted(async () => {
     toastMessages.value = successMessages.value
     toastBootstrap.value.show()
     sessionStorage.removeItem('successMessage');
+  } else if (errorMessage.value != ' '){
+    toastLiveExample.value = document.getElementById('errorToast')
+    toastBootstrap.value = new bootstrap.Toast(toastLiveExample.value)
+    toastMessages.value = errorMessage.value
+    toastBootstrap.value.show()
+    sessionStorage.removeItem('errorMessage');
   }
 })
+
+const width = ref(window.innerWidth);
+const isWeb = ref(window.innerWidth > 767 ? true : false)
+
+window.addEventListener('resize', () => {
+  width.value = window.innerWidth;
+  isWeb.value = window.innerWidth > 767 ? true : false
+});
 </script>

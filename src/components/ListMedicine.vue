@@ -1,10 +1,13 @@
 <template>
   <div  class="container">
     <div class="row">
-      <div class="col-6">
-          <div class="row"><i class="bi bi-circle mr-4 m-fit-content"></i><h5 class="m-fit-content">{{ categorySelect?.name ? categorySelect.name : 'Semua Obat' }}</h5></div>
+      <div :class="isMobile ? '' : 'col-6'">
+          <div class="row"><i class="bi bi-circle m-fit-content" :class="isMobile ? 'mobile-fs pe-0' : 'mr-4'"></i>
+            <h5 v-if="!isMobile" class="m-fit-content">{{ categorySelect?.name ? categorySelect.name : 'Semua Obat' }}</h5>
+            <h6 v-else class="m-fit-content">{{ categorySelect?.name ? categorySelect.name : 'Semua Obat' }}</h6>
+          </div>
       </div>
-      <div class="col-6 text-end"><p>Menampilkan {{ medicines.length }} dari {{ totalData }} Produk Obat</p></div>
+      <div class="text-end" :class="isMobile ? 'mobile-fs' : 'col-6'"><p>Menampilkan {{ medicines.length }} dari {{ totalData }} Produk Obat</p></div>
     </div>
     <div class="medicine-list">
       <div v-if="!isLoading">
@@ -12,18 +15,20 @@
           <div v-for="medicine in medicines" :key="medicine.id" >
             <div class="col">
               <div class="card">
-                <img :src="medicine.image" class="card-img-top" alt="..." style="object-fit: cover; height: 150px;">
+                <img v-if="!isMobile" :src="medicine.image" class="card-img-top" alt="..." style="object-fit: cover; height: 150px;">
+                <img v-else :src="medicine.image" class="card-img-top" alt="..." style="object-fit: cover; height: 100px;">
                 <div class="card-body bg-dark-subtle m-rounded-bottom">
-                  <h5 class="card-title">{{ medicine.name }}</h5>
-                  <p class="card-text">Deskripsi : {{ medicine.description }}</p>
-                  <p class="card-text fw-medium">Harga : Rp. {{ medicine.price }},00</p>
+                  <h5 v-if="!isMobile" class="card-title">{{ medicine.name }}</h5>
+                  <h6 v-else class="card-title">{{ medicine.name }}</h6>
+                  <p class="card-text" :class="isMobile ? 'mobile-fs mb-0' : ''">Deskripsi : {{ medicine.description }}</p>
+                  <p class="card-text fw-medium" :class="isMobile ? 'mobile-fs mb-2' : ''">Harga : {{ currencyFormat(medicine.price ?? 0) }}</p>
                   <div class="row">
                     <div class="col-4">
-                      <button v-if="isLoggedIn" class="btn btn-primary w-100 ps-2" data-bs-toggle="modal" data-bs-target="#cartModal" @click="selectedItem(medicine)"><i class="bi bi-cart"></i></button>
-                      <button v-else class="btn btn-primary w-100 ps-2" data-bs-toggle="modal" data-bs-target="#mustLoginModal" @click="selectedItem(medicine)"><i class="bi bi-cart"></i></button>
+                      <button v-if="isLoggedIn" class="btn btn-primary w-100 ps-2" :class="isMobile ? 'mobile-btn' : ''" data-bs-toggle="modal" data-bs-target="#cartModal" @click="selectedItem(medicine)"><i class="bi bi-cart"></i></button>
+                      <button v-else class="btn btn-primary w-100 ps-2" :class="isMobile ? 'mobile-btn' : ''" data-bs-toggle="modal" data-bs-target="#mustLoginModal" @click="selectedItem(medicine)"><i class="bi bi-cart"></i></button>
                     </div>
                     <div class="col-8 ps-0">
-                      <button @click="selectMedicine(medicine)" class="btn btn-primary w-100">Detail Produk</button>
+                      <button @click="selectMedicine(medicine)" :class="isMobile ? 'mobile-btn ' : ''" class="btn btn-primary w-100">Detail Produk</button>
                     </div>
                   </div>
                 </div>
@@ -94,7 +99,7 @@
           </div>
           <div class="row mb-1">
             <div class="col-4 fw-semibold">Harga</div>
-            <div class="col-8">: <span class="ms-2">Rp. {{ medicineSelect?.price }},00</span></div>
+            <div class="col-8">: <span class="ms-2">{{ currencyFormat(medicineSelect.price ?? 0) }}</span></div>
           </div>
           <div class="row mb-1">
             <div class="col-4 fw-semibold">Stok Tersedia</div>
@@ -124,11 +129,14 @@ import ModalComponent from './ModalComponent.vue';
 import ToastComponent from './ToastComponent.vue';
 import { useAuthStore } from '@/stores/authentication';
 import { useMedicineStore } from '@/stores/medicine';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
+import { currencyFormat } from '@/common.js';
 
 const auth = useAuthStore()
 const medicineStore = useMedicineStore()
 const router = useRouter()
+
+const format = currencyFormat()
 
 const props = defineProps({
   medicines: {
@@ -145,7 +153,12 @@ const props = defineProps({
   },
   categorySelect: {
     type: String,
-    default: 'Semua Kategori'}
+    default: 'Semua Kategori'
+  },
+  isMobile: {
+    type: Boolean,
+    default: false
+  }
 });
 
 const medicineSelect = ref({
@@ -202,4 +215,8 @@ async function addToCart() {
   toastBootstrap.value.show()
   quantity.value = 1
 }
+
+// function currencyFormat(value) {
+
+// }
 </script>
