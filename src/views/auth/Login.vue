@@ -26,7 +26,7 @@
                 <span role="status"> Loading...</span>
               </button>
             </form>
-            <p class="mt-3">Belum memiliki akun? silahkan <span class="is-clickable text-decoration-underline text-primary" @click="this.$router.push('register')">Daftar</span></p>
+            <p class="mt-3">Belum memiliki akun? silahkan <span class="is-clickable text-decoration-underline text-primary" @click="goToRegister">Daftar</span></p>
           </div>
         </div>
       </div>
@@ -63,6 +63,10 @@ const toastBootstrap = ref(null)
 
 const successMessages = ref(sessionStorage.getItem('successMessage') || ' ');
 const errorMessage = ref(sessionStorage.getItem('errorMessage') || ' ');
+
+function goToRegister() {
+  router.push({ name: 'register' });
+}
 
 const validateEmail = (email) => {
   return email !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);

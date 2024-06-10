@@ -4,7 +4,7 @@
             <h3 class="mb-3" :class="isWeb ? '' : 'fs-5'">Cart</h3>
             <div :class="isWeb ? 'col-8' : 'col-12'">
                 <div class="card mb-3" style="max-width: auto;">
-                    <div class="card-header fs-5 fw-semibold bg-primary text-white">Daftar Produk</div>
+                    <div class="card-header fw-semibold bg-primary text-white" :class="isWeb ? 'fs-5' : 'fs-6'">Daftar Produk</div>
                     <ul v-if="cartMedicines.length > 0" class="list-group list-group-flush">
                         <div v-for="i in cartMedicines" :key="i.id">
                             <li class="list-group-item">
@@ -24,7 +24,7 @@
                                                 </div>
                                                 <div class="col-3">
                                                     <div class="row">
-                                                        <button class="btn btn-sm btn-outline-primary" @click="this.$router.push({ name: 'detailMedicine', params: { id: i.Medicine.id } });">Lihat Detail</button>
+                                                        <button class="btn btn-sm btn-outline-primary" @click="goToDetail(i.Medicine.id);">Lihat Detail</button>
                                                     </div>
                                                     <div class="row">
                                                         <button class="btn btn-sm btn-outline-success mt-2" @click="updateQuantity(i)">Simpan</button>
@@ -121,6 +121,10 @@
 
     const setSelectedItem = (item) => {
         selectedItem.value = item;
+    }
+
+    function goToDetail(id) {
+        router.push({name: 'detailMedicine', params: {id: id}})
     }
 
     const removeFromCart = async () => {

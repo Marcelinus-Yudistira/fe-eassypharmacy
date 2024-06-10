@@ -24,15 +24,15 @@
                         <div class="dropdown">
                             <div class="p-1 fs-3 dropdown-toggle" type="button" href="" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-person-circle"></i></div>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#" @click="this.$router.push({name: 'profile'})">Profile</a></li>
+                                <li><a class="dropdown-item" href="#" @click="goToProfile">Profile</a></li>
                                 <li><a class="dropdown-item" href="#" type="button" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</a></li>
                             </ul>
                         </div>
                     </li>
                 </ul>
-                <button v-if="!isLoggedIn && $route.name !== 'login' && $route.name !== 'register'" class="btn btn-outline-success" @click="this.$router.push({name: 'login'})">Login</button>
-                <button v-if="$route.name === 'register'" class="btn btn-outline-success" @click="this.$router.push({name: 'login'})">Login</button>
-                <button v-if="$route.name === 'login'" class="btn btn-outline-success" @click="this.$router.push({name: 'register'})">Register</button>
+                <button v-if="!isLoggedIn && $route.name !== 'login' && $route.name !== 'register'" class="btn btn-outline-success" @click="goToLogin">Login</button>
+                <button v-if="$route.name === 'register'" class="btn btn-outline-success" @click="goToLogin">Login</button>
+                <button v-if="$route.name === 'login'" class="btn btn-outline-success" @click="goToRegister">Register</button>
             </div>
             <div v-else class="collapse navbar-collapse is-content-end" id="navbarSupportedContent">
                 <div class="row mb-1"  :class="$route.name == 'detailMedicine' ? 'justify-content-end me-1' : ''">
@@ -54,7 +54,7 @@
                                 <div class="dropdown">
                                     <div class="p-1 fs-3 dropdown-toggle" type="button" href="" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-person-circle"></i></div>
                                     <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="#" @click="this.$router.push({name: 'profile'})">Profile</a></li>
+                                        <li><a class="dropdown-item" href="#" @click="goToProfile">Profile</a></li>
                                         <li><a class="dropdown-item" href="#" type="button" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</a></li>
                                     </ul>
                                 </div>
@@ -62,10 +62,10 @@
                         </div>
                     </ul>
                 
-                    <button v-if="!isLoggedIn && $route.name !== 'login' && $route.name !== 'register'" class="btn btn-outline-success col-4" @click="this.$router.push({name: 'login'})" style="width: fit-content; height: 39px; margin-top: 12.5px;">Login</button>
+                    <button v-if="!isLoggedIn && $route.name !== 'login' && $route.name !== 'register'" class="btn btn-outline-success col-4" @click="goToLogin" style="width: fit-content; height: 39px; margin-top: 12.5px;">Login</button>
                     <div class="row justify-content-end p-0">
-                        <button v-if="$route.name === 'register'" class="btn btn-outline-success" @click="this.$router.push({name: 'login'})" style="width: fit-content; height: 39px; margin-top: 12.5px;">Login</button>
-                        <button v-if="$route.name === 'login'" class="btn btn-outline-success mt-2" @click="this.$router.push({name: 'register'})" style="width: fit-content; height: 39px; margin-top: 12.5px;">Register</button>
+                        <button v-if="$route.name === 'register'" class="btn btn-outline-success" @click="goToLogin" style="width: fit-content; height: 39px; margin-top: 12.5px;">Login</button>
+                        <button v-if="$route.name === 'login'" class="btn btn-outline-success mt-2" @click="goToRegister" style="width: fit-content; height: 39px; margin-top: 12.5px;">Register</button>
                     </div>
             
                 </div>
@@ -109,6 +109,18 @@ const submitSearch = () => {
   emit('search', data);
 };
 const emit = defineEmits(['search']);
+
+function goToLogin(){
+  router.push({ name: 'login' });
+};  
+
+function goToRegister(){
+  router.push({ name: 'register' });
+};
+
+function gotToProfile(){
+  router.push({ name: 'profile' });
+};
 
 watch(() => auth.isLoggedIn, (newValue) => {
   isLoggedIn.value = newValue;
