@@ -3,92 +3,93 @@
         <h4>Checkout</h4>
         <ul class="list-group list-group-flush">
             <li class="list-group-item">
-                <h5 class="mt-3">Alamat Pengiriman</h5>
+                <h5 class="mt-3" :class="isWeb ? '' : 'fs-6'">Alamat Pengiriman</h5>
                 <div class="row">
-                    <div class="col-3">
-                        <p>{{ userProfile?.username }}</p>
-                        <p>{{ userProfile?.phoneNumber }}</p>
+                    <div :class="isWeb ? 'col-3' : 'col-6'">
+                        <p :class="isWeb ? '' : 'mobile-fs mb-1'">{{ userProfile?.username }}</p>
+                        <p :class="isWeb ? '' : 'mobile-fs'">{{ userProfile?.phoneNumber }}</p>
                     </div>
-                    <div class="col-6">
-                        <p>{{ userProfile?.address }}</p>
+                    <div :class="isWeb ? 'col-6' : 'col-6'">
+                        <p :class="isWeb ? '' : 'mobile-fs'">{{ userProfile?.address }}</p>
                     </div>
-                    <div class="col-3">
-                        <span class="badge text-bg-primary">Belum Checkout</span>
+                    <div :class="isWeb ? 'col-3' : ''">
+                        <span class="badge text-bg-primary" :class="isWeb ? '' : 'mobile-fs'">Belum Checkout</span>
                     </div>
                 </div>
             </li>
             <li class="list-group-item">
-                <div class="row"><h5 class="mt-3">Produk</h5></div>
+                <div class="row"><h5 class="mt-3" :class="isWeb ? '' : 'fs-6'">Produk</h5></div>
                 <div class="row mt-3">
-                    <div class="col-3"><h6>Gambar</h6></div>
-                    <div class="col-3"><h6>Nama</h6></div>
-                    <div class="col-2"><h6>Harga</h6></div>
-                    <div class="col-2"><h6>Jumlah</h6></div>
-                    <div class="col-2"><h6>SubTotal</h6></div>
+                    <div class="col-3"><h6 :class="isWeb ? '' : 'mobile-fs'">Gambar</h6></div>
+                    <div class="col-3"><h6 :class="isWeb ? '' : 'mobile-fs'">Nama</h6></div>
+                    <div v-if="isWeb" class="col-2"><h6>Harga</h6></div>
+                    <div class="col-2"><h6 :class="isWeb ? '' : 'mobile-fs'">Jumlah</h6></div>
+                    <div :class="isWeb ? 'col-2':'col-4'"><h6 :class="isWeb ? '' : 'mobile-fs'">SubTotal</h6></div>
                 </div>
                 <div class="row" v-for="i in medicineCart" :key="i">
                     <div class="col-3">
                         <img :src="i.Medicine.image" 
                         class="img-fluid rounded p-1" alt="..." style="max-height: 120px;">
                     </div>
-                    <div class="col-3 vertical-center">
-                        <p class="m-0">{{ i.Medicine.name }}</p>
+                    <div class="col-3" :class="isWeb ? 'vertical-center' : ''">
+                        <p class="m-0" :class="isWeb ? '' : 'mobile-fs mt-3'">{{ i.Medicine.name }}</p>
+                        <p v-if="!isWeb" class="m-0 mobile-fs mt-1">{{ currencyFormat(i.Medicine.price ?? 0) }}</p>
                     </div>
-                    <div class="col-2 vertical-center">
+                    <div v-if="isWeb" class="col-2 vertical-center">
                         <p class="m-0">{{ currencyFormat(i.Medicine.price ?? 0) }}</p>
                     </div>
                     <div class="col-2 vertical-center">
-                        <p class="m-0">{{ i.count }}</p>
+                        <p class="m-0" :class="isWeb ? '' : 'mobile-fs'">{{ i.count }}</p>
                     </div>
-                    <div class="col-2 vertical-center">
-                        <p class="text-end">{{ currencyFormat(i.subTotal ?? 0) }}</p>
+                    <div class="vertical-center" :class="isWeb ? 'col-2':'col-4'">
+                        <p class="text-end" :class="isWeb ? '' : 'mobile-fs'">{{ currencyFormat(i.subTotal ?? 0) }}</p>
                     </div>
                 </div>
                 <div class="row mt-3 mb-3">
-                  <div class="col-10">
-                    <h6 class="text-end me-5">Total Biaya :</h6>
+                  <div :class="isWeb ? 'col-10':'col-8'">
+                    <h6 class="text-end me-5" :class="isWeb ? '' : 'mobile-fs'">Total Biaya :</h6>
                   </div>
-                  <div class="col-2">
-                    <h6>{{ currencyFormat(sumTotal ?? 0) }}</h6>
+                  <div :class="isWeb ? 'col-2':'col-4'">
+                    <h6 :class="isWeb ? '' : 'mobile-fs'">{{ currencyFormat(sumTotal ?? 0) }}</h6>
                   </div>
                 </div>
             </li>
             <li class="list-group-item">
                 <div class="row">
-                    <h5 class="mt-3">Pengiriman</h5>
+                    <h5 class="mt-3" :class="isWeb ? '' : 'fs-6'">Pengiriman</h5>
                     <div class="col-3 mt-3">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/9/92/New_Logo_JNE.png" 
                             class="img-fluid rounded" alt="..." style="max-height: 80px;">
                     </div>
-                    <div class="col-5">
-                        <h6>Pengiriman Reguler</h6>
-                        <p class="mb-1">Jakarta - Surabaya</p>
-                        <p class="mb-1"><span class="fw-semibold">Estimasi </span>: 2-3 Hari</p>
-                        <p class="mb-1"><span class="fw-semibold">Biaya Pengiriman </span>: {{ currencyFormat(25000) }}</p>
+                    <div :class="isWeb ? 'col-5' : 'col-9'">
+                        <h6 :class="isWeb ? '' : 'mobile-fs'">Pengiriman Reguler</h6>
+                        <p :class="isWeb ? '' : 'mobile-fs'" class="mb-1">Jakarta - Surabaya</p>
+                        <p :class="isWeb ? '' : 'mobile-fs'" class="mb-1"><span class="fw-semibold">Estimasi </span>: 2-3 Hari</p>
+                        <p :class="isWeb ? '' : 'mobile-fs'" class="mb-1"><span class="fw-semibold">Biaya Pengiriman </span>: {{ currencyFormat(25000) }}</p>
                     </div>
                 </div>
             </li>
             <li class="list-group-item">
                 <div class="row">
-                    <h5 class="mt-3">Pembayaran</h5>
+                    <h5 :class="isWeb ? '' : 'fs-6'" class="mt-3">Pembayaran</h5>
                     <div class="col-3 mt-3">
                         <img src="https://karir.sari-mutiara.ac.id/asset/foto_berita/bd03016e20748bbd8e8e6f70022d6611.jpg" 
                             class="img-fluid rounded" alt="..." style="max-height: 150px;">
                     </div>
-                    <div class="col-5">
-                        <h6>Enabling Talent, Passion, Integrity and Accountability</h6>
-                        <p>	Menyediakan layanan perbankan universal di Indonesia secara terpadu sabagai perusahaan dengan kinerja unggul di kawasan ASEAN dan kawasan utama lainnya, serta mendukung percepatan integrasi ASEAN dan menghubungkannya dengan kawasan lain</p>
+                    <div :class="isWeb ? 'col-5' : 'col-9'">
+                        <h6 :class="isWeb ? '' : 'mobile-fs'">Enabling Talent, Passion, Integrity and Accountability</h6>
+                        <p class="text-justify" :class="isWeb ? '' : 'mobile-fs'">	Menyediakan layanan perbankan universal di Indonesia secara terpadu sabagai perusahaan dengan kinerja unggul di kawasan ASEAN dan kawasan utama lainnya, serta mendukung percepatan integrasi ASEAN dan menghubungkannya dengan kawasan lain</p>
                     </div>
                 </div>
             </li>
   
         </ul>
         <div class="row mt-2 mb-5">
-            <div class="col-3 offset-6">
-              <router-link to="/cart"><button class="btn btn-outline-primary w-100">Batal</button></router-link>
+            <div class="col-3 offset-6" :class="isWeb ? '' : 'pe-0'">
+              <router-link to="/cart"><button class="btn btn-outline-primary w-100" :class="isWeb ? '' : 'mobile-btn'">Batal</button></router-link>
             </div>
             <div class="col-3">
-                <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#checkoutModal">Buat Pesanan</button>
+                <button class="btn btn-primary w-100" :class="isWeb ? '' : 'mobile-btn'" data-bs-toggle="modal" data-bs-target="#checkoutModal">Buat Pesanan</button>
             </div>
         </div>
         <ModalComponent
@@ -167,5 +168,13 @@
   onMounted(async () => {
     await fetchData()
   })
+
+  const width = ref(window.innerWidth);
+const isWeb = ref(window.innerWidth > 767 ? true : false)
+
+window.addEventListener('resize', () => {
+    width.value = window.innerWidth;
+    isWeb.value = window.innerWidth > 767 ? true : false
+});
   
   </script>

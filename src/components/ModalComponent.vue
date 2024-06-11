@@ -11,13 +11,13 @@
                     <slot></slot>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="handleCancel">{{ cancelButtonText }}</button>
+                    <button type="button" class="btn btn-secondary" :class="isWeb ? '' : 'mobile-btn'" data-bs-dismiss="modal" @click="handleCancel">{{ cancelButtonText }}</button>
                     <div v-if="isDisabled">
-                      <button type="button" class="btn btn-primary is-disabled">{{ approveButtonText }}</button>
+                      <button type="button" class="btn btn-primary is-disabled" :class="isWeb ? '' : 'mobile-btn'">{{ approveButtonText }}</button>
                     </div>
                     <div v-else>
-                      <button v-if="!isLoading" type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="handleFunction">{{ approveButtonText }}</button>
-                      <button v-else class="btn btn-primary w-100" type="button" disabled>
+                      <button v-if="!isLoading" type="button" class="btn btn-primary" :class="isWeb ? '' : 'mobile-btn'" data-bs-dismiss="modal" @click="handleFunction">{{ approveButtonText }}</button>
+                      <button v-else class="btn btn-primary w-100" :class="isWeb ? '' : 'mobile-btn'" type="button" disabled>
                           <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
                           <span role="status"> {{ approveButtonText }}...</span>
                       </button>
@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
+import { ref, defineProps } from 'vue';
 
 const props = defineProps({
   title: {
@@ -75,4 +75,12 @@ const handleCancel = () => {
     props.cancelHandler();
   }
 };
+
+const width = ref(window.innerWidth);
+const isWeb = ref(window.innerWidth > 767 ? true : false)
+
+window.addEventListener('resize', () => {
+    width.value = window.innerWidth;
+    isWeb.value = window.innerWidth > 767 ? true : false
+});
 </script>

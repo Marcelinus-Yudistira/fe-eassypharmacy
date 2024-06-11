@@ -1,7 +1,7 @@
 <template>
     <div class="container mt-5">
-        <div class="row">
-            <h3 class="mb-3" :class="isWeb ? '' : 'fs-5'">Cart</h3>
+        <div class="row" :class="isWeb ? '' : 'pe-2 ps-2'">
+            <h3 class="mb-3" :class="isWeb ? '' : 'fs-6'">Cart</h3>
             <div :class="isWeb ? 'col-8' : 'col-12'">
                 <div class="card mb-3" style="max-width: auto;">
                     <div class="card-header fw-semibold bg-primary text-white" :class="isWeb ? 'fs-5' : 'fs-6'">Daftar Produk</div>
@@ -9,34 +9,55 @@
                         <div v-for="i in cartMedicines" :key="i.id">
                             <li class="list-group-item">
                                 <div class="row g-0">
-                                    <div class="col-md-2">
+                                    <div :class="isWeb ? 'col-md-2' : 'col-4'">
                                         <img :src="i.Medicine.image"
                                         class="img-fluid rounded mt-3" alt="..." style="max-height: 120px;">
                                     </div>
-                                    <div class="col-md-10">
+                                    <div :class="isWeb ? 'col-md-10' : 'col-8'">
                                         <div class="card-body pb-1">
                                             <div class="row">
-                                                <div class="col-9">
-                                                    <h5 class="card-title">{{ i.Medicine.name }}</h5>
-                                                    <p class="card-text"><small class="text-body-secondary">{{ i.Medicine.description }}</small></p>
-                                                    <p class="card-text">{{ currencyFormat(i.Medicine.price ?? 0) }}</p>
-                                                    <p class="card-text">Stok : {{ i.Medicine.stock }} buah</p>
+                                                <div class="col-9" :class="isWeb ? 'col-9' : 'col-12'">
+                                                    <h5 v-if="isWeb" class="card-title">{{ i.Medicine.name }}</h5>
+                                                    <h6 v-else class="card-title">{{ i.Medicine.name }}</h6>
+                                                    <p class="card-text mobile-fs" :class="!isWeb ? 'mb-1' : ''"><small class="text-body-secondary">{{ i.Medicine.description }}</small></p>
+                                                    <p class="card-text mobile-fs" :class="!isWeb ? 'mb-1' : ''">{{ currencyFormat(i.Medicine.price ?? 0) }}</p>
+                                                    <p class="card-text mobile-fs" :class="!isWeb ? 'mb-1' : ''">Stok : {{ i.Medicine.stock }} buah</p>
                                                 </div>
-                                                <div class="col-3">
-                                                    <div class="row">
-                                                        <button class="btn btn-sm btn-outline-primary" @click="goToDetail(i.Medicine.id);">Lihat Detail</button>
-                                                    </div>
-                                                    <div class="row">
-                                                        <button class="btn btn-sm btn-outline-success mt-2" @click="updateQuantity(i)">Simpan</button>
-                                                    </div>
-                                                    <div class="row mt-4" style="justify-content: end;">
-                                                        <div class="col-10" style="width: fit-content; color: #808080;">
-                                                            <span class="fs-4" :class="i.count < 2 ? 'is-disabled' : ''" type="button" @click="i.count--"><i class="bi bi-dash-square"></i></span>
-                                                            <span class="mx-2 fs-5">{{ i.count }}</span>
-                                                            <span class="fs-4" :class="i.Medicine.stock == i.count ? 'is-disabled' : ''" type="button" @click="i.count++"><i class="bi bi-plus-square"></i></span>
+                                                <div :class="isWeb ? 'col-3' : ''">
+                                                    <div v-if="isWeb">
+                                                        <div class="row">
+                                                            <button class="btn btn-sm btn-outline-primary" @click="goToDetail(i.Medicine.id);">Lihat Detail</button>
                                                         </div>
-                                                        <div class="col-2 me-2" style="align-content: center;">
-                                                            <span class="text-danger fs-5 is-clickable" data-bs-toggle="modal" data-bs-target="#deleteCartModal"><i class="bi bi-trash3-fill" @click="setSelectedItem(i)"></i></span>
+                                                        <div class="row">
+                                                            <button class="btn btn-sm btn-outline-success mt-2" @click="updateQuantity(i)">Simpan</button>
+                                                        </div>
+                                                        <div class="row mt-4" style="justify-content: end;">
+                                                            <div class="col-10" style="width: fit-content; color: #808080;">
+                                                                <span class="fs-4" :class="i.count < 2 ? 'is-disabled' : ''" type="button" @click="i.count--"><i class="bi bi-dash-square"></i></span>
+                                                                <span class="mx-2 fs-5">{{ i.count }}</span>
+                                                                <span class="fs-4" :class="i.Medicine.stock == i.count ? 'is-disabled' : ''" type="button" @click="i.count++"><i class="bi bi-plus-square"></i></span>
+                                                            </div>
+                                                            <div class="col-2 me-2" style="align-content: center;">
+                                                                <span class="text-danger fs-5 is-clickable" data-bs-toggle="modal" data-bs-target="#deleteCartModal"><i class="bi bi-trash3-fill" @click="setSelectedItem(i)"></i></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div v-else>
+                                                        <div class="row mt-2 mb-2" style="justify-content: end;">
+                                                            <div class="col-10" style="width: fit-content; color: #808080;">
+                                                                <span class="fs-5" :class="i.count < 2 ? 'is-disabled' : ''" type="button" @click="i.count--"><i class="bi bi-dash-square"></i></span>
+                                                                <span class="mx-2 fs-5">{{ i.count }}</span>
+                                                                <span class="fs-4" :class="i.Medicine.stock == i.count ? 'is-disabled' : ''" type="button" @click="i.count++"><i class="bi bi-plus-square"></i></span>
+                                                            </div>
+                                                            <div class="col-2 me-2" style="align-content: center;">
+                                                                <span class="text-danger fs-5 is-clickable" data-bs-toggle="modal" data-bs-target="#deleteCartModal"><i class="bi bi-trash3-fill" @click="setSelectedItem(i)"></i></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <button class="btn btn-sm btn-outline-primary mobile-btn" @click="goToDetail(i.Medicine.id);">Lihat Detail</button>
+                                                        </div>
+                                                        <div class="row">
+                                                            <button class="btn btn-sm btn-outline-success mt-2 mobile-btn" @click="updateQuantity(i)">Simpan</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -52,37 +73,37 @@
                     </ul>
                 </div>
             </div>
-            <div :class="isWeb ? 'col-4' : 'col-12'">
+            <div :class="isWeb ? 'col-4' : 'col-12 mt-3'">
                 <div class="card border-primary mb-3" style="max-width: auto; height: fit-content;">
-                <div class="card-header fs-5 fw-semibold">Detail Harga ({{ cartMedicines.length }} Produk)</div>
+                <div class="card-header fw-semibold" :class="isWeb ? 'fs-5' : 'fs-6' ">Detail Harga ({{ cartMedicines.length }} Produk)</div>
                 <div class="card-body text-primary">
-                    <h5 class="card-title">Sub Total Harga</h5>
+                    <h5 class="card-title" :class="isWeb ? 'fs-5' : 'fs-6'">Sub Total Harga</h5>
                     <div v-for="i in cartMedicines" :key="i.id">
                         <div class="row">
                             <div class="col-6">
-                                <p class="card-text">{{ i.Medicine.name }}</p>
+                                <p class="card-text" :class="isWeb ? '' : 'mobile-fs'">{{ i.Medicine.name }}</p>
                             </div>
                             <div class="col-2">
-                                <p class="card-text text-end">Rp.</p>
+                                <p class="card-text text-end" :class="isWeb ? '' : 'mobile-fs'">Rp.</p>
                             </div>
                             <div class="col-4">
-                                <p class="card-text text-end">{{ currencyFormat(i.subTotal ?? 0, false) }}</p>
+                                <p class="card-text text-end" :class="isWeb ? '' : 'mobile-fs'">{{ currencyFormat(i.subTotal ?? 0, false) }}</p>
                             </div>
                         </div>
                     </div>
-                    <h5 class="card-title mt-5">Total Harga</h5>
+                    <h5 class="card-title" :class="isWeb ? 'fs-5 mt-5' : 'fs-6 mt-2'">Total Harga</h5>
                     <div class="row mb-3">
                         <div class="col-8">
-                            <p class="card-text text-end">Rp.</p>
+                            <p class="card-text text-end" :class="isWeb ? '' : 'mobile-fs'">Rp.</p>
                         </div>
                         <div class="col-4">
-                            <p class="card-text text-end fw-semibold">{{ currencyFormat(sumTotal ?? 0, false) }}</p>
+                            <p class="card-text text-end fw-semibold" :class="isWeb ? '' : 'mobile-fs'">{{ currencyFormat(sumTotal ?? 0, false) }}</p>
                         </div>
                     </div>
                     <div v-if="cartMedicines.length >= 1">
-                        <router-link to="/transaction"><button class="btn btn-primary w-100">Checkout</button></router-link>
+                        <router-link to="/transaction"><button class="btn btn-primary w-100" :class="isWeb ? '' : 'mobile-btn'">Checkout</button></router-link>
                     </div>
-                    <button v-else class="btn btn-primary w-100 is-disabled">Checkout</button>
+                    <button v-else class="btn btn-primary w-100 is-disabled" :class="isWeb ? '' : 'mobile-btn'">Checkout</button>
                 </div>
                 </div>
             </div>

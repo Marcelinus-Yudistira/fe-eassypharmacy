@@ -5,7 +5,7 @@
         <img v-if="isWeb" src="/src/assets/logo.png" alt="logo" width="400px">
         <img v-else src="/src/assets/logo2-1.png" class="ps-5 pe-5 mb-5" alt="logo" width="300px">
       </div>
-      <div class="col d-flex align-items-center">
+      <div class="col d-flex align-items-center" :class=" isWeb ? '' : 'ps-5 pe-5' ">
         <div class="card w-50" :class=" !isWeb ? 'w-100': 'mt-5' ">
           <div class="card-body">
             <form @submit.prevent="login">

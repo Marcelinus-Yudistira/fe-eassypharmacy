@@ -35,7 +35,7 @@
                 <button v-if="$route.name === 'login'" class="btn btn-outline-success" @click="goToRegister">Register</button>
             </div>
             <div v-else class="collapse navbar-collapse is-content-end" id="navbarSupportedContent">
-                <div class="row mb-1"  :class="$route.name == 'detailMedicine' ? 'justify-content-end me-1' : ''">
+                <div class="row mb-1"  :class="$route.name != 'home' ? 'justify-content-end me-1' : ''">
    
                     <div v-if="$route.name === 'home'" class="d-flex col-9 p-0">
                         <div class="input-group me-2 mt-3" @submit.prevent="submitSearch">
@@ -93,12 +93,6 @@ const props = defineProps({
 const width = ref(window.innerWidth);
 const isWeb = ref(window.innerWidth > 767 ? true : false)
 
-watch(width, (newWidth, oldWidth) => {
-    console.log('Width changed from', oldWidth, 'to', newWidth);
-    console.log(isWeb.value,'<<< Kondisi apakah dalam tampilan web?');
-});
-
-// Update width when window is resized
 window.addEventListener('resize', () => {
     width.value = window.innerWidth;
     isWeb.value = window.innerWidth > 767 ? true : false
@@ -118,7 +112,7 @@ function goToRegister(){
   router.push({ name: 'register' });
 };
 
-function gotToProfile(){
+function goToProfile(){
   router.push({ name: 'profile' });
 };
 

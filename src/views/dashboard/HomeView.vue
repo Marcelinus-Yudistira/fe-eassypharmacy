@@ -41,6 +41,19 @@
               </div>
           </div>
         </div>
+
+        <div class="card border-dark-subtle mb-3 mt-4" style="max-width: auto;">
+            <div class="card-body p-0">
+              <div class="list-group">
+                <div class="list-group-item">
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" v-model="readyStock">
+                    <label class="form-check-label" for="flexSwitchCheckDefault" :class="isWeb ? '' : 'mobile-fs'">Stok Tersedia</label>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
         <button class="btn btn-primary w-100" :class="isWeb ? '' : 'mobile-btn'" @click="fetchBySorting()">Terapkan</button>
       </div>
       <div :class="isWeb ? 'col-10' : 'col-7'" v-if="medicines.length > 0">
@@ -64,7 +77,7 @@
           </ul>
         </nav>
       </div>
-      <div class="col-10 align-content-center" v-else>
+      <div class="align-content-center" :class="isWeb ? 'col-10 ' : 'col-7'" v-else>
         <p class="text-center fs-3 mb-0"><i class="bi bi-search"></i></p>
         <p class="text-center">Data tidak ditemukan</p>
       </div>
@@ -90,6 +103,7 @@ const isLoading = ref(false);
 const pagination = ref(null)
 const selectedSorting = ref('ASC'); 
 const resetSearchKeyword = ref(true)
+const readyStock = ref(false)
 
 const props = defineProps({ 
   searchTerm: String
@@ -118,6 +132,7 @@ async function fetchData() {
 async function fetchByKeyword() {
   isLoading.value = true
   selectedSorting.value = 'ASC'
+  readyStock.value = false
   resetSearchKeyword.value = false
   emit('resetSearch', false);
   medicines.value = await medicineStore.fetchMedicineItems({keyword: props.searchTerm});
@@ -128,6 +143,7 @@ async function fetchByKeyword() {
 async function fetchByCategory(item){
   isLoading.value = true
   selectedSorting.value = 'ASC'
+  readyStock.value = false
   if (item.id == null) fetchData()
   else medicines.value = await medicineStore.fetchMedicineItems({categoryId: item.id});
   pagination.value = medicineStore.pagination
@@ -145,6 +161,7 @@ async function fetchBySorting(){
 
   if (selectedCategory?.value?.id != null) params.categoryId = selectedCategory.value.id;
   if (props.searchTerm != null && !resetSearchKeyword.value) params.keyword = props.searchTerm;
+  if (readyStock.value == true) params.isStock = 1
 
   medicines.value = await medicineStore.fetchMedicineItems(params);
   pagination.value = medicineStore.pagination;

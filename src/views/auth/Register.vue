@@ -5,7 +5,7 @@
           <img v-if="isWeb" src="/src/assets/logo.png" alt="logo" width="400px">
           <img v-else src="/src/assets/logo2-1.png" class="ps-5 pe-5 mb-5" alt="logo" width="300px">
         </div>
-        <div class="col d-flex align-items-center">
+        <div class="col d-flex align-items-center" :class=" isWeb ? '' : 'ps-5 pe-5' ">
           <div class="card w-70" :class=" !isWeb ? 'w-100': 'mt-5' ">
             <div class="card-body">
               <form @submit.prevent="register">
@@ -37,7 +37,7 @@
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Daftar</button>
               </form>
-              <p class="mt-3">Sudah memiliki akun? silahkan <span class="is-clickable text-decoration-underline text-primary" @click="this.$router.push('login')">Masuk</span></p>
+              <p class="mt-3">Sudah memiliki akun? silahkan <span class="is-clickable text-decoration-underline text-primary" @click="goToLogin">Masuk</span></p>
             </div>
           </div>
         </div>
@@ -82,6 +82,9 @@
   let addressValidationMessage = ref('');
   let usernameValidationMessage = ref('');
   
+  function goToLogin() {
+  router.push({ name: 'register' });
+}
   const validateEmail = (email) => {
     return email !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
