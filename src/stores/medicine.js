@@ -67,6 +67,8 @@ export const useMedicineStore = defineStore('medicineStore', () => {
 
             if (response.status == 401) {
                 auth.isLoggedIn = false
+                localStorage.removeItem('token');
+                throw error
             }
 
             const data = responseData.data
@@ -88,6 +90,12 @@ export const useMedicineStore = defineStore('medicineStore', () => {
                 body: JSON.stringify(request)
             })
             await response.json()
+
+            if (response.status == 401) {
+                auth.isLoggedIn = false
+                localStorage.removeItem('token');
+                throw error
+            }
         } catch (error) {
             console.error('Error adding cart:', error)
         }
@@ -103,10 +111,16 @@ export const useMedicineStore = defineStore('medicineStore', () => {
                   },
             })
             const responseData = await response.json()
+            if (response.status == 401) {
+                auth.isLoggedIn = false
+                localStorage.removeItem('token');
+                throw error
+            }
             const data = responseData.data
             return data;
         } catch (error) {
             console.error('Error check product in cart:', error)
+            throw error
         }
     }
 
@@ -173,6 +187,8 @@ export const useMedicineStore = defineStore('medicineStore', () => {
             const responseData = await response.json()
             if (response.status == 401) {
                 auth.isLoggedIn = false
+                localStorage.removeItem('token');
+                throw error
             }
             const data = responseData.data
             return data;

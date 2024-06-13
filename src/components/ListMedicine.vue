@@ -24,8 +24,13 @@
                   <p class="card-text fw-medium" :class="isMobile ? 'mobile-fs mb-2' : ''">Harga : {{ currencyFormat(medicine.price ?? 0) }}</p>
                   <div class="row">
                     <div class="col-4">
-                      <button v-if="isLoggedIn" class="btn btn-primary w-100 ps-2" :class="isMobile ? 'mobile-btn' : ''" data-bs-toggle="modal" data-bs-target="#cartModal" @click="selectedItem(medicine)"><i class="bi bi-cart"></i></button>
-                      <button v-else class="btn btn-primary w-100 ps-2" :class="isMobile ? 'mobile-btn' : ''" data-bs-toggle="modal" data-bs-target="#mustLoginModal" @click="selectedItem(medicine)"><i class="bi bi-cart"></i></button>
+                      <div v-if="medicine.stock >= 1">
+                        <button v-if="isLoggedIn" class="btn btn-primary w-100 ps-2" :class="isMobile ? 'mobile-btn' : ''" data-bs-toggle="modal" data-bs-target="#cartModal" @click="selectedItem(medicine)"><i class="bi bi-cart"></i></button>
+                        <button v-else class="btn btn-primary w-100 ps-2" :class="isMobile ? 'mobile-btn' : ''" data-bs-toggle="modal" data-bs-target="#mustLoginModal" @click="selectedItem(medicine)"><i class="bi bi-cart"></i></button>
+                      </div>
+                      <div v-else>
+                        <button class="btn btn-primary w-100 ps-2" :class="isMobile ? 'mobile-btn' : ''" disabled><i class="bi bi-cart"></i></button>
+                      </div>
                     </div>
                     <div class="col-8 ps-0">
                       <button @click="selectMedicine(medicine)" :class="isMobile ? 'mobile-btn ' : ''" class="btn btn-primary w-100">Detail Produk</button>
@@ -136,8 +141,6 @@ const auth = useAuthStore()
 const medicineStore = useMedicineStore()
 const router = useRouter()
 
-const format = currencyFormat()
-
 const props = defineProps({
   medicines: {
     type: Array,
@@ -198,25 +201,28 @@ const toastBootstrap = ref(null)
 const messages = ref('');
 
 async function addToCart() {
-  const isProductInCart = await medicineStore.checkProductInCart(medicineSelect.value.id)
-  if(!isProductInCart) {
-    let payload = {
-      medicineId: medicineSelect.value.id,
-      count: quantity.value
+  try{
+    const isProductInCart = await medicineStore.checkProductInCart(medicineSelect.value.id)
+    if(!isProductInCart) {
+      let payload = {
+        medicineId: medicineSelect.value.id,
+        count: quantity.value
+      }
+      await medicineStore.addCart(payload)
+      messages.value = 'Berhasil Menambahkan ke dalam Cart'
+      toastLiveExample.value = document.getElementById('successToast') 
+    }else{
+      messages.value = 'Product sudah ada di dalam Cart!'
+      toastLiveExample.value = document.getElementById('errorToast') 
     }
-    await medicineStore.addCart(payload)
-    messages.value = 'Berhasil Menambahkan ke dalam Cart'
-    toastLiveExample.value = document.getElementById('successToast') 
-  }else{
-    messages.value = 'Product sudah ada di dalam Cart!'
-    toastLiveExample.value = document.getElementById('errorToast') 
+    toastBootstrap.value = new bootstrap.Toast(toastLiveExample.value)
+    toastBootstrap.value.show()
+    quantity.value = 1
+  }catch(err){
+    sessionStorage.setItem('errorMessage', 'Silahkan Login terlebih dahulu!');
+    router.push({name: 'login'})
+    isLoading.value = false
   }
-  toastBootstrap.value = new bootstrap.Toast(toastLiveExample.value)
-  toastBootstrap.value.show()
-  quantity.value = 1
 }
 
-// function currencyFormat(value) {
-
-// }
 </script>

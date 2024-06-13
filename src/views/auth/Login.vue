@@ -102,8 +102,9 @@ async function login() {
       sessionStorage.setItem('successMessage', 'Login berhasil!');
       router.push('/home');
     }catch(error){
-      toastMessages.value = error.message
-      toastStatus.value= false
+      toastLiveExample.value = document.getElementById('errorToast')
+      toastBootstrap.value = new bootstrap.Toast(toastLiveExample.value)
+      toastMessages.value = 'Pengguna tidak ditemukan!'
       toastBootstrap.value.show()
       isLoading.value = false
     }

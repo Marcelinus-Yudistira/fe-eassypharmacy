@@ -84,7 +84,8 @@ const router = useRouter();
 const auth = useAuthStore()
 
 const searchTerm = ref('');
-const isLoggedIn = ref('');
+let isLoggedIn = ref('');
+const token = ref('')
 
 const props = defineProps({ 
   resetSearch: Boolean
@@ -120,6 +121,13 @@ watch(() => auth.isLoggedIn, (newValue) => {
   isLoggedIn.value = newValue;
 });
 
+watch(() => token.value, (val) => {
+  if(!auth.isLoggedIn && localStorage.getItem('token')) {
+    isLoggedIn = false
+  } 
+})
+
+
 watch(() => props.resetSearch, (newValue) => {
   if (newValue) {
     searchTerm.value = null
@@ -128,7 +136,9 @@ watch(() => props.resetSearch, (newValue) => {
 
 onMounted(() => {
     const tokenRefresh = localStorage.getItem('token');
+    token.value = tokenRefresh
     if(tokenRefresh){
+        auth.isLoggedIn = true
         isLoggedIn.value = true;
     }
 })

@@ -39,7 +39,7 @@ import ModalComponent from './components/ModalComponent.vue';
   async function logout() {
     isLoading.value = true
     sessionStorage.setItem('successMessage', 'Logout berhasil!');
-    await auth.logout();
+    auth.logout();
     isLoading.value = false
     router.push({name: 'login'});
   };

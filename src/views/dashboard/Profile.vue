@@ -258,15 +258,16 @@ import { currencyFormat } from '@/common.js';
   const orderMedicines = ref([])
   const userProfile = ref(null) 
   async function fetchData() {
-    isLoading.value = true
-    orderMedicines.value = await medicineStore.fetchOrder();
-    userProfile.value = await auth.getUserData()
-    console.log(auth.isLoggedIn, '<<<<<<<');
-    if(!auth.isLoggedIn){
+    try{
+        isLoading.value = true
+        orderMedicines.value = await medicineStore.fetchOrder();
+        userProfile.value = await auth.getUserData()
+        isLoading.value = false
+    }catch(err){
         sessionStorage.setItem('errorMessage', 'Silahkan Login terlebih dahulu!');
         router.push({name: 'login'})
+        isLoading.value = false
     }
-    isLoading.value = false
   }
 
   const sumTotal = computed(() => {
@@ -311,7 +312,6 @@ import { currencyFormat } from '@/common.js';
   }
 
   async function cancelingOrder() {
-    console.log(selectedOrder.value.id,'<<< id');
     await medicineStore.cancelOrder(selectedOrder.value.id)
     messages.value = 'Pesanan Berhasil dibatalkan!'
     toastLiveExample.value = document.getElementById('successToast')

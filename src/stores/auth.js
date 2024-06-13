@@ -45,12 +45,9 @@ export const useAuthStore  = defineStore({
         this.isLoggedIn = true;
         this.accessToken = responseData.data.accessToken;
 
-        console.log('sampe sini');
-
         return responseData;
       } catch (error) {
           console.error('Error registering users:', error);
-          console.log(error);
           throw error;
       }
     },

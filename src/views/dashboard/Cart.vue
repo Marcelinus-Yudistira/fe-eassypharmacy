@@ -5,7 +5,7 @@
             <div :class="isWeb ? 'col-8' : 'col-12'">
                 <div class="card mb-3" style="max-width: auto;">
                     <div class="card-header fw-semibold bg-primary text-white" :class="isWeb ? 'fs-5' : 'fs-6'">Daftar Produk</div>
-                    <ul v-if="cartMedicines.length > 0" class="list-group list-group-flush">
+                    <ul v-if="cartMedicines?.length > 0" class="list-group list-group-flush">
                         <div v-for="i in cartMedicines" :key="i.id">
                             <li class="list-group-item">
                                 <div class="row g-0">
@@ -75,7 +75,7 @@
             </div>
             <div :class="isWeb ? 'col-4' : 'col-12 mt-3'">
                 <div class="card border-primary mb-3" style="max-width: auto; height: fit-content;">
-                <div class="card-header fw-semibold" :class="isWeb ? 'fs-5' : 'fs-6' ">Detail Harga ({{ cartMedicines.length }} Produk)</div>
+                <div class="card-header fw-semibold" :class="isWeb ? 'fs-5' : 'fs-6' ">Detail Harga ({{ cartMedicines?.length }} Produk)</div>
                 <div class="card-body text-primary">
                     <h5 class="card-title" :class="isWeb ? 'fs-5' : 'fs-6'">Sub Total Harga</h5>
                     <div v-for="i in cartMedicines" :key="i.id">
@@ -100,7 +100,7 @@
                             <p class="card-text text-end fw-semibold" :class="isWeb ? '' : 'mobile-fs'">{{ currencyFormat(sumTotal ?? 0, false) }}</p>
                         </div>
                     </div>
-                    <div v-if="cartMedicines.length >= 1">
+                    <div v-if="cartMedicines?.length >= 1">
                         <router-link to="/transaction"><button class="btn btn-primary w-100" :class="isWeb ? '' : 'mobile-btn'">Checkout</button></router-link>
                     </div>
                     <button v-else class="btn btn-primary w-100 is-disabled" :class="isWeb ? '' : 'mobile-btn'">Checkout</button>
@@ -162,8 +162,8 @@
 
     const sumTotal = computed(() => {
         let tempTotal = 0;
-        if(cartMedicines.value.length > 0){
-            for(let i = 0; i < cartMedicines.value.length; i++){
+        if(cartMedicines.value?.length > 0){
+            for(let i = 0; i < cartMedicines.value?.length; i++){
                 tempTotal += cartMedicines.value[i].subTotal
             }
             return tempTotal
@@ -173,11 +173,17 @@
 
     async function fetchData() {
         isLoading.value = true
-        cartMedicines.value = await medicineStore.fetchCartItems();
-        if(!auth.isLoggedIn){
+        try{
+            cartMedicines.value = await medicineStore.fetchCartItems();
+        }catch(err){
             sessionStorage.setItem('errorMessage', 'Silahkan Login terlebih dahulu!');
             router.push({name: 'login'})
+            isLoading.value = false
         }
+        // if(!auth.isLoggedIn && !localStorage.getItem('token')){
+        //     sessionStorage.setItem('errorMessage', 'Silahkan Login terlebih dahulu!');
+        //     router.push({name: 'login'})
+        // }
         isLoading.value = false
     }
 

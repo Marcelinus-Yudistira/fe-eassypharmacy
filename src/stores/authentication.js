@@ -42,9 +42,15 @@ export const useAuthStore = defineStore('authStore', () => {
 
             const responseData = await response.json();
 
-            if (!response.ok) {
-                let errorMessage = await errorHandler.errorChecker(response.status)
-                throw new Error(responseData.message || errorMessage);
+            // if (!response.ok) {
+            //     let errorMessage = await errorHandler.errorChecker(response.status)
+            //     throw new Error(responseData.message || errorMessage);
+            // }
+
+            if (response.status == 401) {
+                auth.isLoggedIn = false
+                localStorage.removeItem('token');
+                throw error
             }
 
             localStorage.setItem('token', responseData.data.accessToken);
@@ -68,7 +74,9 @@ export const useAuthStore = defineStore('authStore', () => {
           });
           const responseData = await response.json()
           if (response.status == 401) {
-              isLoggedIn.value = false
+            auth.isLoggedIn = false
+            localStorage.removeItem('token');
+            throw error
           }
           const data = responseData.data
           user.value = responseData.data
